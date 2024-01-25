@@ -1,0 +1,24 @@
+body {
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+#timer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#current-time {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#timer-input {
+  margin-bottom: 10px;
+}
+
+#start-timer {
+  cursor: pointer;
+}
