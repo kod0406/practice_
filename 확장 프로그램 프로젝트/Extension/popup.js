@@ -9,20 +9,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function startTimer() {
     stopAlarmSound();
-    const timeInput = document.getElementById('timeInput');
-    const timeInSeconds = parseInt(timeInput.value, 10);
+    const timeInput = document.getElementById('timeInput'); //html의 timeInput에서 값을 읽어와 timeInput에 저장
+    const timeInSeconds = parseInt(timeInput.value, 10); // 10진수의 정수로 값을 받겠다
 
     // Create alarms for the main timer and the additional set time
     createAlarm('mainTimer', timeInSeconds);
     const additionalTimeInSeconds = 10; // You can adjust this additional time
-    createAlarm('additionalTimer', timeInSeconds + additionalTimeInSeconds);
+    createAlarm('additionalTimer', timeInSeconds + additionalTimeInSeconds); //기본 알람 10초후애 추가 알람 생성 로직
 
     alert(`Timer set for ${timeInSeconds} seconds.`);
-}
+}//버튼을 누르면 mainTimer와 additionalTimer값을 받아오면서 createAlarm()를 호출
 
 function createAlarm(alarmName, delayInSeconds) {
-    chrome.alarms.create(alarmName, { delayInMinutes: delayInSeconds / 60 });
+    chrome.alarms.create(alarmName, { delayInMinutes: delayInSeconds / 60 }); // 초를 /60해서 분으로 만듬
 }
+/*팝업 알림은 chrome.alarms.create(alarmName, alarmInfo);로 구성되어 있으며, alarmInfo는 알람의 설정을 담당,
+
+*/
 
 // Listen for alarms
 chrome.alarms.onAlarm.addListener(function (alarm) {
@@ -32,10 +35,10 @@ chrome.alarms.onAlarm.addListener(function (alarm) {
     } else if (alarm.name === 'additionalTimer') {
         handleAdditionalTimerCompletion();
     }
-});
+});//createAlarm()에서 만들어진 알람의 시간이 다 되면 이 코드가 실행됨 "onAlarm"이기에
 
 function handleTimerCompletion() {
-    // Notify the user that the main timer is complete
+    //알람 양식
     chrome.notifications.create({
         type: 'basic',
         iconUrl: 'icon.png',
