@@ -12,3 +12,8 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
     alert('Additional time is up!');
   }
 });
+chrome.browserAction.onClicked.addListener(function(tab) {
+  chrome.tabs.create({'url': chrome.extension.getURL('popup.html')}, function(tab) {
+    // Tab opened.
+  });
+});
