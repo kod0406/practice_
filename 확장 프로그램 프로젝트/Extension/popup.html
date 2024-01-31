@@ -4,8 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css" />
-    <title>Animated Countdown timer</title>
+    <title></title>
 </head>
 <body>
 <div id="timer"></div>
@@ -13,7 +14,13 @@
     <input type="number" id="timeInput" placeholder="Enter sec" />
     <button class="btn" id="startTimer">Start</button>
 </div>
-
+<div style="text-align: center;">
+    <i class="fa fa-clock-o fa-5x" style="color: #808080;"></i>
+    <span id="clock" class="clock-style">clock</span>
+</div>
+<div style="text-align: center;">
+    <span id="date" class="date-style">date</span>
+</div>
 <script src="popup.js"></script>
 </body>
 </html>
