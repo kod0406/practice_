@@ -6,6 +6,7 @@
 /* Inputs */
 
 .inputs {
+  margin-bottom: 10%;
   .btn {
     background-color: #333;
     border: none;
@@ -88,3 +89,12 @@ body {
   align-items: center;
   flex-direction: column;
 }
+.clock-style {
+  color: gray;
+  font-size: 60px;
+}
+.date-style {
+  color: gray;
+  font-size: 30px;
+}
+

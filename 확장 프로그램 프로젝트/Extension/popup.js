@@ -1,72 +1,8 @@
-const audio = new Audio(chrome.runtime.getURL("Martini Blue.flac"));
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('startTimer').addEventListener('click', function () {
-        startTimer();
-    });
-}); /* 이 html에서(popup.html에서)
-       startTimer를 클릭했을때, startTimer()라는 함수를 실행하라 */
-
-function startTimer() {
-    stopAlarmSound();
-    const timeInput = document.getElementById('timeInput'); //html의 timeInput에서 값을 읽어와 timeInput에 저장
-    const timeInSeconds = parseInt(timeInput.value, 10); // 10진수의 정수로 값을 받겠다
-
-    // Create alarms for the main timer and the additional set time
-    createAlarm('mainTimer', timeInSeconds);
-    const additionalTimeInSeconds = 10; // You can adjust this additional time
-    createAlarm('additionalTimer', timeInSeconds + additionalTimeInSeconds); //기본 알람 10초후애 추가 알람 생성 로직
-
-    alert(`Timer set for ${timeInSeconds} seconds.`);
-}//버튼을 누르면 mainTimer와 additionalTimer값을 받아오면서 createAlarm()를 호출
-
-function createAlarm(alarmName, delayInSeconds) {
-    chrome.alarms.create(alarmName, { delayInMinutes: delayInSeconds / 60 }); // 초를 /60해서 분으로 만듬
-}
-/*팝업 알림은 chrome.alarms.create(alarmName, alarmInfo);로 구성되어 있으며, alarmInfo는 알람의 설정을 담당,
-
-*/
-
-// Listen for alarms
-chrome.alarms.onAlarm.addListener(function (alarm) {
-    if (alarm.name === 'mainTimer') {
-        handleTimerCompletion();
-        audio.play();
-    } else if (alarm.name === 'additionalTimer') {
-        handleAdditionalTimerCompletion();
-    }
-});//createAlarm()에서 만들어진 알람의 시간이 다 되면 이 코드가 실행됨 "onAlarm"이기에
-
-function handleTimerCompletion() {
-    //알람 양식
-    chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icon.png',
-        title: 'Timer Complete',
-        message: 'Your main timer is complete!',
-    });
-}
-
-function handleAdditionalTimerCompletion() {
-    // Notify the user that the additional timer is complete
-    chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icon.png',
-        title: 'Additional Timer Complete',
-        message: 'Your additional timer is complete!',
-    });
-}
-
-function stopAlarmSound() {
-    // Check if the audio is currently playing and stop it
-    audio.pause();
-    audio.currentTime = 0;
-}
-
-
+const audio = new Audio(chrome.runtime.getURL("/Audio/Martini Blue.flac"));
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 10;
 const ALERT_THRESHOLD = 5;
+
 const COLOR_CODES = {
     info: {
         color: "green",
@@ -81,7 +17,11 @@ const COLOR_CODES = {
     },
 };
 
-
+let TIME_LIMIT = 0;
+let timePassed = 0;
+let timeLeft = TIME_LIMIT;
+let timerInterval = null;
+let remainingPathColor = COLOR_CODES.info.color;
 
 document.querySelector("#timer").innerHTML = `
 
@@ -121,17 +61,54 @@ document.querySelector("#timer").innerHTML = `
 window.addEventListener("load", () => {
     const startBtn = document.getElementById("startTimer");
     const timeInput = document.getElementById("timeInput");
-    //   console.log(startBtn, timeInput);
+    /*chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10) / 60 });
+    alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`);*/
+
     timeInput.onchange = () => {
-        TIME_LIMIT = timeInput.value;
+        TIME_LIMIT = parseInt(timeInput.value, 10); // Convert input value to an integer
+        //timeInput.value = ""; tlqkf 이게 문제였네 시발 진짜
+    };
+
+    startBtn.onclick = () => {
+        TIME_LIMIT === 0 ? alert("Add time") : startTimer();
+        chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10) / 60 });
+        SetAlarm();
+        alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`);
+        stopAlarmSound();
         timeInput.value = "";
     };
-    startBtn.onclick = () => {
-        TIME_LIMIT === 0 ? alert("Add time") : startTimer2();
-    };
+
+
 });
 
-function startTimer2() {
+chrome.alarms.onAlarm.addListener(function (alarm) {
+    if (alarm.name === 'TimerEnd') {
+        handleAlarm();
+        audio.play();
+    }
+});
+
+function handleAlarm() {
+    //알람 양식
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/Pic/12.png',
+        title: '타이머 종료',
+        message: '설정한 시간이 다 되었습니다.',
+    });
+}
+
+function SetAlarm() {
+    //알람 양식
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/Pic/12.png',
+        title: '타이머 설정',
+        message: '시간을 설정하였습니다.....',
+    });
+}
+
+function startTimer() {
     console.log("value");
 
     // Reset variables and styles
@@ -203,4 +180,62 @@ function setCircleDasharray() {
         .getElementById("base-timer-path-remaining")
         .setAttribute("stroke-dasharray", circleDasharray);
 }
+
+function stopAlarmSound() {
+    audio.pause();
+    audio.currentTime = 0;
+}
+//------------------ 현재시간 함수
+var Target = document.getElementById("clock");
+
+function clock() {
+    var time = new Date();
+    var hours = time.getHours();
+    var minutes = time.getMinutes();
+    var seconds = time.getSeconds();
+
+
+    Target.innerText =
+        `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+}
+
+function updateDate() {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var monthIndex = currentDate.getMonth();
+    var year = currentDate.getFullYear();
+
+    var months = [
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    ];
+
+    var formattedDate = `${day < 10 ? '0' + day : day} ${months[monthIndex]} ${year}`;
+
+    document.getElementById('date').innerText = formattedDate;
+}
+function updateTabTitle() {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString();
+    document.title = formattedTime;
+
+    // Calculate the time left until the alarm starts (replace this with your actual alarm time)
+    const alarmTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0); // Set your alarm time here
+    const timeLeft2 = alarmTime.getTime() - now.getTime();//이게 문제임
+
+    // If the timer is running, show the time left; otherwise, show the current time
+    if (TIME_LIMIT > 0) {
+        timeLeft = Math.max(timeLeft, 0);
+        const minutesLeft = parseInt(timeLeft2 / (1000 * 60), 10);
+        const secondsLeft = parseInt((timeLeft2 % (1000 * 60)) / 1000, 10);
+
+        document.title = `Timer: ${minutesLeft}m ${secondsLeft}s`;
+    } else {
+        document.title = formattedTime;
+    }
+}
+
+clock();
+updateDate();
+setInterval(updateTabTitle, 1000);
+setInterval(clock, 1000);
 
