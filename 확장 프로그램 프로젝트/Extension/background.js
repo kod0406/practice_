@@ -19,7 +19,45 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+let timeLeft = 0;
+let timePassed = 0;
+let left = 0;
+
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "logValue") {
+    timeLeft = (message.value * 2);
+    console.log("Get Value:",timeLeft);
+    timePassed = 0;
+    setInterval(() => {
+      timePassed = timePassed += 1;
+      left = timeLeft - timePassed;
+      if (left > 0) {
+        console.log("Send to request Change img.");
+        console.log("timeLeft:",left);
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const currentTabId = tabs[0].id;
+          chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
+        });
+      }
+    }, 500);
+  }
+});
+
+/*function startTimer() {
+  setInterval(() => {
+    timePassed += 1;
+    timeLeft = timeLeft - timePassed;
+    if (timeLeft > 0) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const currentTabId = tabs[0].id;
+        chrome.tabs.sendMessage(currentTabId, { action: "changeImage" });
+      });
+    }
+  }, 1000);
+}*/
+
+/*chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "logValue") {
     // Send a message to b.js
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -28,3 +66,4 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     });
   }
 });
+*/
