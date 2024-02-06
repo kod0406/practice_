@@ -3,7 +3,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     // Tab opened.
   });
 });
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
   const startTimerBtn = document.getElementById('startTimer');
   const timeInput = document.getElementById('timeInput');
 
@@ -17,30 +17,33 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
   });
-});
+});*/
 
 let timeLeft = 0;
 let timePassed = 0;
 let left = 0;
-
+let intervalId = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "logValue") {
-    timeLeft = (message.value * 2);
+    timeLeft = message.value;
     console.log("Get Value:",timeLeft);
     timePassed = 0;
-    setInterval(() => {
-      timePassed = timePassed += 1;
+    const intervalId = setInterval(() => {
+      timePassed = timePassed += 5;
       left = timeLeft - timePassed;
-      if (left > 0) {
+      if (left > 1) {
         console.log("Send to request Change img.");
         console.log("timeLeft:",left);
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const currentTabId = tabs[0].id;
           chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
         });
+      } else {
+        console.log("Interval stopped.");
+        clearInterval(intervalId);
       }
-    }, 500);
+    }, 5000);
   }
 });
 

@@ -1,114 +1,71 @@
-/*let Time_Left = 0;
-let Time_Passed = 0;
-
-/!*function startTimerHandler() {
-    const timeInput = document.getElementById("timeInput");
-    const inputValue = parseInt(timeInput.value, 10);
-
-    // 이제 원하는 동작 수행
-    console.log("Start Timer in changeimg.js with value:", inputValue);
-}*!/
-
-// background.js logic
-// b.js logic
-let left;  // variable to store the value
-
-let timeInterval;*/
-// Listen for messages from the background script
-/*
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.action === "setValue") {
-        left = message.value;
-        console.log("Value received in popup.js:", left);
-
-        // Reset Time_Passed and Time_Left
-        Time_Passed = 0;
-        Time_Left = left;
-
-        timeInterval = setInterval(() => {
-            Time_Passed = Time_Passed += 1;
-            Time_Left = left - Time_Passed;
-            console.log("Time Left in:", Time_Left);
-            document.querySelectorAll('*').forEach((el) => {
-                const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
-                const isImgElement = el.tagName.toLowerCase() === 'img';
-                if (checkBgImage || isImgElement) {
-                    el.src = 'https://dszw1qtcnsa5e.cloudfront.net/community/20231117/16d04d31-01c1-43de-81b2-e6614491f797/image.jpg';
-                }
-            });
-            if (Time_Left === 0) {
-                clearInterval(timeInterval);
-                Time_Left = 0;
-                console.log("Time gone Zero");
-            }
-        }, 1000);
-    }
-});
-*/
-
-/*chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "changeImage") {
-        console.log("respond of Change img");
-        document.querySelectorAll('*').forEach((el) => {
-            const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
-            const isImgElement = el.tagName.toLowerCase() === 'img';
-
-            if (checkBgImage || isImgElement) {
-                el.src = 'https://dszw1qtcnsa5e.cloudfront.net/community/20231117/16d04d31-01c1-43de-81b2-e6614491f797/image.jpg';
-                //el.src = chrome.extension.getURL('Pic/12.png');
-            }
-        });
-    }
-});*/
-
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "changeContent") {
-        // Change text
-        document.querySelectorAll('*').forEach((el) => {
-            if (el.nodeType === Node.TEXT_NODE) {
-                el.nodeValue = "Hello, World!";
-            }
-        });
+        console.log("respond");
+
+        // Define array of image URLs
+        const imageUrls = [
+            'https://postfiles.pstatic.net/MjAyNDAyMDZfMTY0/MDAxNzA3MjAzMTYyNTY2.IubBhjC9GrSn7uFdLZ1bH6lte_n_kQlmsqhk0yUAbPwg.6tt12GaZytin9XSRO66YiLsQAbrobwMbcG1xTJCQzOog.PNG.kod0406/1.png?type=w773',
+            'https://postfiles.pstatic.net/MjAyNDAyMDZfOTUg/MDAxNzA3MjAzMTYyNDgy.ZmiomMsSkl3entRNTpVIsKdvF6BOktBliEmjc5Ap9Zgg.fL7ZJ5hQ2nW37NCik89cQr_LZibDZxecClpvBpKLwq8g.PNG.kod0406/4.png?type=w773',
+            'https://postfiles.pstatic.net/MjAyNDAyMDZfMTM2/MDAxNzA3MjAzMTYyNTc3.d_SKGZrgPux5owyjvDgFbcFsPrqIZP9W8WO1o73WN3Mg.39eo_MeCdjViKVJma-tKHuLdOv_B6Aw-_X4dUlN-mgAg.PNG.kod0406/3.png?type=w773',
+            'https://postfiles.pstatic.net/MjAyNDAyMDZfMjUz/MDAxNzA3MjAzMTYyNTky.bbJv_hNE0B1pSwuYO3TGGLJKA4_pH177OXMiOySKPxwg.IUtLU2_rLAUPMEe2_BNL6HzfAV2olGUg1hQweB1X94Ig.PNG.kod0406/2.png?type=w773'
+        ];//위 2개 이미지 문제
 
         // Change image
-        document.querySelectorAll('*').forEach((el) => {
-            const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
-            const isImgElement = el.tagName.toLowerCase() === 'img';
+        if (window.location.href.includes("popup.html")) {
+            // If it's popup.html, you might want to avoid executing the content script
+            console.log("Script not executed on popup.html");
+        } else {
+            // Continue with your existing logic to change images on other pages
+            document.querySelectorAll('img[data-src]').forEach((el) => {
+                // Handle lazy-loaded images
+                const randomIndex = Math.floor(Math.random() * imageUrls.length);
+                el.setAttribute('data-src', imageUrls[randomIndex]);
+            });
 
-            if (checkBgImage || isImgElement) {
-                el.src = 'https://dszw1qtcnsa5e.cloudfront.net/community/20231117/16d04d31-01c1-43de-81b2-e6614491f797/image.jpg';
-            }
-        });
+            document.querySelectorAll('*').forEach((el) => {
+                const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
+                const isImgElement = el.tagName.toLowerCase() === 'img';
+
+                if (checkBgImage || isImgElement) {
+                    // For non-lazy-loaded images
+                    const randomIndex = Math.floor(Math.random() * imageUrls.length);
+                    el.src = imageUrls[randomIndex];
+                }
+            });
+
+
+
+            const originalContents = [];
+
+// Iterate over all elements in the DOM
+            document.querySelectorAll('*').forEach((el) => {
+                // Check if the element is not a script or style tag
+                if (el.tagName.toLowerCase() !== 'script' && el.tagName.toLowerCase() !== 'style') {
+                    // Store the original content of the element
+                    originalContents.push({ element: el, content: el.innerHTML });
+
+                    // Replace innerHTML based on your logic
+                    el.innerHTML = el.innerHTML.replace(/(?<=\>)(.*?)(?=\<)/g, (match) => {
+                        // Generate a random number (0 to 9)
+                        const randomNumber = Math.floor(Math.random() * 20);
+
+                        // Check if the random number is 0 or 1
+                        if (randomNumber === 0) {
+                            // If randomNumber is 0, return a specific replacement
+                            return '지금은 알려줄수 없다.';
+                        } else if (randomNumber === 1) {
+                            // If randomNumber is 1, return another specific replacement
+                            return '그런건가...';
+                        } else {
+                            // If randomNumber is neither 0 nor 1, return the original content
+                            return match;
+                        }
+                    });
+                }
+            });
+        }
     }
 });
 
 
-/*
-let left = 10;
-let Time_Passed = 0;
-let Time_Left = left;
-
-const timeInterval = setInterval(() => {
-    Time_Passed += 1;
-    Time_Left = left - Time_Passed;
-    console.log("Time Left in:", Time_Left);
-
-    document.querySelectorAll('*').forEach((el) => {
-        const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
-        const isImgElement = el.tagName.toLowerCase() === 'img';
-
-        if (checkBgImage || isImgElement) {
-            // Check if Time_Left is greater than 0 before changing the image
-            if (Time_Left > 0) {
-                el.src = 'https://dszw1qtcnsa5e.cloudfront.net/community/20231117/16d04d31-01c1-43de-81b2-e6614491f797/image.jpg';
-            }
-        }
-    });
-
-    if (Time_Left <= 0) {
-        clearInterval(timeInterval);
-        Time_Left = 0;
-        console.log("Time gone Zero");
-    }
-}, 1000);*/

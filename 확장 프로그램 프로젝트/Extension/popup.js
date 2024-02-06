@@ -1,7 +1,7 @@
 const audio = new Audio(chrome.runtime.getURL("/Audio/Martini Blue.flac"));
 const FULL_DASH_ARRAY = 283;
-const WARNING_THRESHOLD = 10;
-const ALERT_THRESHOLD = 5;
+const WARNING_THRESHOLD = 50;
+const ALERT_THRESHOLD = 30;
 
 
 
@@ -11,11 +11,15 @@ const COLOR_CODES = {
     },
     warning: {
         color: "orange",
-        threshold: WARNING_THRESHOLD,
+        get threshold(){
+            return(WARNING_THRESHOLD / 100 ) * TIME_LIMIT;
+        }
     },
     alert: {
         color: "red",
-        threshold: ALERT_THRESHOLD,
+        get threshold(){
+            return(ALERT_THRESHOLD / 100 ) * TIME_LIMIT;
+        }
     },
 };
 
@@ -67,18 +71,19 @@ window.addEventListener("load", () => {
     alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`);*/
 
     timeInput.onchange = () => {
-        TIME_LIMIT = parseInt(timeInput.value, 10); // Convert input value to an integer
+        TIME_LIMIT = (parseInt(timeInput.value, 10) * 60); // Convert input value to an integer
         //timeInput.value = ""; tlqkf 이게 문제였네 시발 진짜
     };
 
     startBtn.onclick = () => {
         TIME_LIMIT === 0 ? alert("Add time") : startTimer();
-
-        const inputValue = timeInput.value;
+/*        ALERT_THRESHOLD = (timeInput.value * 0.5);
+        WARNING_THRESHOLD = (timeInput.value * 0.25);*/
+        const inputValue = (timeInput.value * 60);
         console.log("Changing image with value:", inputValue);
         chrome.runtime.sendMessage({ action: "logValue", value: inputValue });
 
-        chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10) / 60 });
+        chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10)});
         SetAlarm();
         //alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`);
         stopAlarmSound();
@@ -117,6 +122,7 @@ function SetAlarm() {// 알람 양식 2
 function startTimer() {
 
     // Reset variables and styles
+    clearInterval(timerInterval);
     timePassed = 0;
     remainingPathColor = COLOR_CODES.info.color;
     document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.warning.color, COLOR_CODES.alert.color);
