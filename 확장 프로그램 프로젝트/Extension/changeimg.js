@@ -36,6 +36,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
 
+
             const originalContents = [];
 
 // Iterate over all elements in the DOM
@@ -48,7 +49,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     // Replace innerHTML based on your logic
                     el.innerHTML = el.innerHTML.replace(/(?<=\>)(.*?)(?=\<)/g, (match) => {
                         // Generate a random number (0 to 9)
-                        const randomNumber = Math.floor(Math.random() * 20);
+                        const randomNumber = Math.floor(Math.random() * 10);
 
                         // Check if the random number is 0 or 1
                         if (randomNumber === 0) {

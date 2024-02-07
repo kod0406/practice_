@@ -27,23 +27,49 @@ let intervalId = null;
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "logValue") {
     timeLeft = message.value;
-    console.log("Get Value:",timeLeft);
-    timePassed = 0;
-    const intervalId = setInterval(() => {
+    console.log("Get Value:", timeLeft);
+
+    intervalId = setInterval(() => {
       timePassed = timePassed += 5;
       left = timeLeft - timePassed;
+
       if (left > 1) {
-        console.log("Send to request Change img.");
-        console.log("timeLeft:",left);
+        console.log("Send request to change img.");
+        console.log("timeLeft:", left);
+
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           const currentTabId = tabs[0].id;
           chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
         });
-      } else {
+      } else if (left === 0) {
         console.log("Interval stopped.");
         clearInterval(intervalId);
+        timePassed = 0;
       }
     }, 5000);
+  } else if (message.action === "Start") {
+    console.log("recived Start");
+    intervalId = setInterval(() => {
+      timePassed = timePassed += 5;
+      left = timeLeft - timePassed;
+
+      if (left > 1) {
+        console.log("Send request to change img.");
+        console.log("timeLeft:", left);
+
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const currentTabId = tabs[0].id;
+          chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
+        });
+      } else if (left === 0) {
+        console.log("Interval stopped.");
+        clearInterval(intervalId);
+        timePassed = 0;
+      }
+    }, 5000);
+  } else if (message.action === "Stop") {
+    console.log("recived Stop");
+    clearInterval(intervalId);
   }
 });
 
