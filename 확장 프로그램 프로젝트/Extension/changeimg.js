@@ -1,23 +1,21 @@
-
+//background.js에서 메시지를 받을때마다 이미지와 택스트를 바꾸는 역할을 수행하는 스크립트.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "changeContent") {
         console.log("respond");
 
-        // Define array of image URLs
+        // 랜덤으로 바뀔 이미지의 URL주소
         const imageUrls = [
             'https://postfiles.pstatic.net/MjAyNDAyMDZfMTY0/MDAxNzA3MjAzMTYyNTY2.IubBhjC9GrSn7uFdLZ1bH6lte_n_kQlmsqhk0yUAbPwg.6tt12GaZytin9XSRO66YiLsQAbrobwMbcG1xTJCQzOog.PNG.kod0406/1.png?type=w773',
             'https://postfiles.pstatic.net/MjAyNDAyMDZfOTUg/MDAxNzA3MjAzMTYyNDgy.ZmiomMsSkl3entRNTpVIsKdvF6BOktBliEmjc5Ap9Zgg.fL7ZJ5hQ2nW37NCik89cQr_LZibDZxecClpvBpKLwq8g.PNG.kod0406/4.png?type=w773',
             'https://postfiles.pstatic.net/MjAyNDAyMDZfMTM2/MDAxNzA3MjAzMTYyNTc3.d_SKGZrgPux5owyjvDgFbcFsPrqIZP9W8WO1o73WN3Mg.39eo_MeCdjViKVJma-tKHuLdOv_B6Aw-_X4dUlN-mgAg.PNG.kod0406/3.png?type=w773',
             'https://postfiles.pstatic.net/MjAyNDAyMDZfMjUz/MDAxNzA3MjAzMTYyNTky.bbJv_hNE0B1pSwuYO3TGGLJKA4_pH177OXMiOySKPxwg.IUtLU2_rLAUPMEe2_BNL6HzfAV2olGUg1hQweB1X94Ig.PNG.kod0406/2.png?type=w773'
-        ];//위 2개 이미지 문제
+        ];
 
-        // Change image
-        if (window.location.href.includes("popup.html")) {
-            // If it's popup.html, you might want to avoid executing the content script
+
+        if (window.location.href.includes("popup.html")) {// 타이머를 표시하는 popup.html은 바뀌지 않게 설정
             console.log("Script not executed on popup.html");
         } else {
-            // Continue with your existing logic to change images on other pages
-            document.querySelectorAll('img[data-src]').forEach((el) => {
+            document.querySelectorAll('img[data-src]').forEach((el) => { //현재 페이지에서 data-src에 존재하는 img를 선택(지연로딩(Lazy Loading)이미지 처리에 사용)
                 // Handle lazy-loaded images
                 const randomIndex = Math.floor(Math.random() * imageUrls.length);
                 el.setAttribute('data-src', imageUrls[randomIndex]);
@@ -26,7 +24,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             document.querySelectorAll('*').forEach((el) => {
                 const checkBgImage = getComputedStyle(el).backgroundImage !== "none";
                 const isImgElement = el.tagName.toLowerCase() === 'img';
-
+                //현재 페이지에서 img와 백그라운드 img를 선택
                 if (checkBgImage || isImgElement) {
                     // For non-lazy-loaded images
                     const randomIndex = Math.floor(Math.random() * imageUrls.length);
@@ -34,22 +32,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 }
             });
 
-
-
-
-            const originalContents = [];
-
-// Iterate over all elements in the DOM
+            const originalContents = [];//원래 문자열 저장
             document.querySelectorAll('*').forEach((el) => {
-                // Check if the element is not a script or style tag
+                // <script>와 <style>제외
                 if (el.tagName.toLowerCase() !== 'script' && el.tagName.toLowerCase() !== 'style') {
                     // Store the original content of the element
                     originalContents.push({ element: el, content: el.innerHTML });
 
-                    // Replace innerHTML based on your logic
+                    // <>밖에 있는 문자 대체
                     el.innerHTML = el.innerHTML.replace(/(?<=\>)(.*?)(?=\<)/g, (match) => {
-                        // Generate a random number (0 to 9)
-                        const randomNumber = Math.floor(Math.random() * 10);
+                        // 메시지를 받을때마다 전체 문자열의 4%씩 교체(누적)
+                        const randomNumber = Math.floor(Math.random() * 50);
 
                         // Check if the random number is 0 or 1
                         if (randomNumber === 0) {
