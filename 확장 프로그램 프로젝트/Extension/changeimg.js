@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         ];
 
 
-        if (window.location.href.includes("popup.html")) {// 타이머를 표시하는 popup.html은 바뀌지 않게 설정
+        if (window.location.href.includes("popup.html") || window.location.href.includes(".pdf")) {// 타이머를 표시하는 popup.html와 공부하는데 펼쳐놓는 .pdf는 바뀌지 않게 설정
             console.log("Script not executed on popup.html");
         } else {
             document.querySelectorAll('img[data-src]').forEach((el) => { //현재 페이지에서 data-src에 존재하는 img를 선택(지연로딩(Lazy Loading)이미지 처리에 사용)

@@ -144,6 +144,7 @@ function startTimer() {//타이머를 시작하는 함수.
         setRemainingPathColor(timeLeft);
 
         if (timeLeft === 0) {
+            TimerAgent = false;
             onTimesUp();
             handleAlarm();
             audio.play();
