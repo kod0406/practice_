@@ -374,3 +374,11 @@ function StopTimer(){ // 알람 양식 8
         message: '타이머를 정지했습니다.....',
     });
 }
+//다크모드
+if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    document.documentElement.classList.add("dark")
+}
+
+document.getElementById("bottomBtn1").addEventListener("click",() => {
+    document.documentElement.classList.toggle("dark")
+})
