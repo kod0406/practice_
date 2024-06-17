@@ -3,81 +3,58 @@
   padding: 0;
   font-family: sans-serif;
 }
-/* Inputs */
 
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  overflow-y: auto; /* 세로 스크롤 추가 */
+  overflow-x: hidden; /* 가로 스크롤 숨김 */
+}
+
+/* Inputs */
 .inputs {
   margin-bottom: 1%;
   text-align: center;
+}
 
-  .btn {
-    background-color: #333;
-    border: 1px solid grey;
-    color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 18px;
-    padding: 11px 20px;
-    margin: 4px 2px;
-    cursor: pointer;
+.btn, .btn1, .btn2 {
+  background-color: #333;
+  border: 1px solid grey;
+  color: #fff;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 18px;
+  padding: 11px 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
 
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      background-color: #45a049;
-    }
-    &:active {
-      background-color: #225624;
-    }
-  }
-  .btn1 {
-    background-color: #333;
-    border: 1px solid grey;
-    color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 18px;
-    padding: 11px 20px;
-    margin: 4px 2px;
-    cursor: pointer;
+.btn:hover, .btn1:hover, .btn2:hover {
+  background-color: #45a049;
+}
 
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      background-color: #f23737;
-    }
-    &:active {
-      background-color: #225624;
-    }
+.btn1:hover {
+  background-color: #f23737;
+}
 
-  }
+.btn2:hover {
+  background-color: #f28500;
+}
 
-  .btn2 {
-    background-color: #333;
-    border: 1px solid grey;
-    color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 18px;
-    padding: 11px 20px;
-    margin: 4px 2px;
-    cursor: pointer;
-
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      background-color: #f28500;
-    }
-    &:active {
-      background-color: #225624;
-    }
-  }
-
-  #time-input {
-    width: 100px;
-    height: 30px;
-    border-radius: 5px;
-    border: 1px solid lightgray;
-    padding: 5px;
-    font-size: 18px;
-    margin: 0 auto;
-  }
+#timeInput {
+  width: 120px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  padding: 5px;
+  font-size: 18px;
+  margin: 0 auto;
+  background-color: white;
+  color: black;
 }
 
 .base-timer {
@@ -86,6 +63,7 @@
   height: 300px;
   margin-top: 7%;
 }
+
 .base-timer__svg {
   transform: scale(-1);
   background-color: #fff;
@@ -96,10 +74,12 @@
   fill: none;
   stroke: none;
 }
+
 .base-timer__path-elapsed {
   stroke-width: 7px;
   stroke-linecap: round;
 }
+
 .base-timer__path-remaining {
   transform: rotate(90deg);
   transform-origin: center;
@@ -111,9 +91,11 @@
 .base-timer__path-remaining.green {
   color: greenyellow;
 }
+
 .base-timer__path-remaining.orange {
   color: orange;
 }
+
 .base-timer__path-remaining.red {
   color: red;
 }
@@ -129,65 +111,232 @@
   height: 300px;
 }
 
-body {
-  display: flex;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
 .clock-style {
   color: gray;
   font-size: 60px;
 }
+
 .date-style {
   color: gray;
   font-size: 30px;
 }
-.btn-bot{
-  .bottom-btn {
-    background-color: #333;
-    border: 1px solid grey;
-    color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 18px;
-    padding: 11px 20px;
-    margin: 4px 2px;
-    cursor: pointer;
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    text-align: center;
 
-    transition: all 0.3s ease-in-out;
-    &:hover {
-      background-color: #808080;
-    }
-    &:active {
-      background-color: #000000;
-    }
+.btn-bot {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
 
-  }
+.bottom-btn {
+  background-color: #333;
+  border: 1px solid grey;
+  color: #fff;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 18px;
+  padding: 11px 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.bottom-btn:hover {
+  background-color: #808080;
+}
+
+.bottom-btn:active {
+  background-color: #000000;
 }
 
 .fullscreen-image {
-  position: fixed;
-  bottom: 0;
+  max-width: 100%;
+  height: auto;
+  margin-top: 20px;
+  border-radius: 10px;
+  display: block; /* img 요소가 div와 flexbox의 영향을 받도록 block으로 설정 */
+  margin-bottom: 0; /* 아래 마진을 0으로 설정 */
+}
+
+.todo-wrapper {
+  justify-content: center;
+  margin-top: 0; /* 위 마진을 0으로 설정 */
+  min-width: 600px;
+}
+
+.todo-title {
+  padding: 2rem;
   text-align: center;
+  color: dimgray;
+  font-size: 5rem;
+}
+
+.todo-box {
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.todo-input-box {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  height: 3rem;
+  border-bottom: 1px solid #ddd;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 0; /* 아래 마진을 0으로 설정 */
+}
+
+button {
+  background-color: transparent;
+  border: 0;
+}
+
+.complete-all-btn {
+  color: gray;
+  min-width: none;
+  min-height: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.5rem 0.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.complete-all-btn.checked {
+  color: green;
+}
+
+.todo-input {
+  width: 80%;
+  text-align: center;
+  border: 0;
+  outline: none;
+  font-size: 1.3rem;
+  background-color: white;
+  color: black;
+}
+
+.todo-item {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 3rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.todo-item:hover .delBtn {
+  opacity: 1;
+}
+
+.checkbox {
+  min-width: none;
+  min-height: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.5rem 0.5rem;
+  border-radius: 50px;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  text-align: center;
+}
+
+.todo-item.checked .checkbox {
+  border: 2px solid darkgray;
+  color: green;
+}
+
+.todo {
+  font-size: 1.3rem;
+  padding: 0 1rem;
+  width: 80%;
+}
+
+.todo-item.checked .todo {
+  font-style: italic;
+  text-decoration: line-through;
+  color: lightgray;
+}
+
+.delBtn {
+  opacity: 1;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  font-weight: lighter;
+  cursor: pointer;
+}
+
+.todo-bottom {
+  height: 3rem;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.button-group {
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.button-group button {
+  border: 1px solid #eee;
+  padding: 0.2rem 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button-group button.selected {
+  border: 2px solid rosybrown;
+  padding: 0.2rem 0.5rem;
+  margin: 0 0.5rem;
+  border-radius: 8px;
+}
+
+.clear-completed-btn:hover {
+  font-style: italic;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.edit-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 590px;
+  height: 2.8rem;
+  margin: 0;
+}
+
+p.info {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #ccc;
 }
 
 html.dark {
   background: #333;
   color: #fcfcfc;
-
 }
-html.dark #time-input {
+
+html.dark #timeInput, html.dark .todo-input {
   background-color: #333;
-  border-color: #333;
-  color: #333;
+  border-color: #666;
+  color: #fcfcfc;
 }
 
 html.dark .base-timer__svg {
   background-color: #333;
+}
+
+html.dark .todo-box {
+  background-color: #333; /* 다크 모드에서 todo-list 배경색 변경 */
+  color: #fcfcfc;
 }

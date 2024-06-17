@@ -74,36 +74,36 @@ window.addEventListener("load", () => {//Html의 값을 읽어오는 역할
     const timeInput = document.getElementById("timeInput");
     /*chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10) / 60 }); // 크롬 자체 API로 알람을 만드는 기능
     alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`); 디버깅용 알람 */
-    startBtn.onclick = () => { //startBtn을 누르면
-        timePassed = 0;
-        TIME_LIMIT = (parseInt(timeInput.value, 10) * 60);
-        if (isNaN(TIME_LIMIT) || TIME_LIMIT <= 0) {
-            if(TimerAgent == true){
-                timeInput.value = "";
-                StopTimer();
-                chrome.runtime.sendMessage({ action: "Input_Error", value: Error });// 타이머 관련 값을 background.js로 전송
-                TimerAgent = false;//타이머를 실행했는가를 체크하는 변수
-                return;
-            }
-            else{
-                Notvalid();
-                timeInput.value = "";
-                chrome.runtime.sendMessage({ action: "Input_Error", value: Error });
-                return;
-            }
-        }
-        else {
-            TimerAgent = true;
-            startTimer();
-            const inputValue = (timeInput.value * 60);
-            console.log("Changing image with value:", inputValue);
-            chrome.runtime.sendMessage({action: "logValue", value: inputValue});
-            SetAlarm();
-            //alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`); 디버깅용 확인 알람
-            stopAlarmSound();
+startBtn.onclick = () => { 
+    timePassed = 0;
+    TIME_LIMIT = (parseInt(timeInput.value, 10) * 60);
+    if (isNaN(TIME_LIMIT) || TIME_LIMIT <= 0) {
+        if(TimerAgent == true){
             timeInput.value = "";
+            StopTimer();
+            TimerAgent = false;//타이머를 실행했는가를 체크하는 변수
+            paused = false;
+            chrome.runtime.sendMessage({ action: "Input_Error", value: Error });// 타이머 관련 값을 background.js로 전송
+            document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
+            return;
+        } else {
+            Notvalid();
+            timeInput.value = "";
+            chrome.runtime.sendMessage({ action: "Input_Error", value: Error });
+            document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
+            return;
         }
-    };
+    } else {
+        TimerAgent = true;
+        startTimer();
+        const inputValue = (timeInput.value * 60);
+        console.log("Changing image with value:", inputValue);
+        chrome.runtime.sendMessage({action: "logValue", value: inputValue});
+        SetAlarm();
+        stopAlarmSound();
+        timeInput.value = "";
+    }
+};
     pauseBtn.onclick = () =>{
     if(timePassed != 0) {
         PauseTimer();
@@ -273,7 +273,7 @@ function updateTabTitle() {
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
     document.title = `현재시각: ${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    
+
     if (TIME_LIMIT > 0) {
         const minutesLeft = Math.floor(timeLeft / 60);
         const secondsLeft = timeLeft % 60;
