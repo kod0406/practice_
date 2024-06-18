@@ -290,7 +290,7 @@ button {
 }
 
 .button-group button.selected {
-  border: 1.6px solid rosybrown; /* 80% of original 2px */
+  border: 1.6px solid #000000; /* 80% of original 2px */
   padding: 0.16rem 0.4rem; /* 80% of original 0.2rem 0.5rem */
   margin: 0 0.4rem; /* 80% of original 0 0.5rem */
   border-radius: 6.4px; /* 80% of original 8px */

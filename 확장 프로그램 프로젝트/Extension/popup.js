@@ -4,21 +4,20 @@ const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 50;
 const ALERT_THRESHOLD = 30;
 
-
 const COLOR_CODES = {//입력값을 통해 유동적으로 남은시간별 타이머 색상을 설정하는 타이머
     info: {
         color: "green",
     },
     warning: {
         color: "orange",
-        get threshold(){
-            return(WARNING_THRESHOLD / 100 ) * TIME_LIMIT; //총 입력시간의 50%가 남았을때
+        get threshold() {
+            return (WARNING_THRESHOLD / 100) * TIME_LIMIT; //총 입력시간의 50%가 남았을때
         }
     },
     alert: {
         color: "red",
-        get threshold(){
-            return(ALERT_THRESHOLD / 100 ) * TIME_LIMIT; //총 입력시간의 30%가 남았을때
+        get threshold() {
+            return (ALERT_THRESHOLD / 100) * TIME_LIMIT; //총 입력시간의 30%가 남았을때
         }
     },
 };
@@ -72,52 +71,54 @@ window.addEventListener("load", () => {//Html의 값을 읽어오는 역할
     const pauseBtn = document.getElementById("PauseTimer");
     const resumeBtn = document.getElementById("ResumeTimer");
     const timeInput = document.getElementById("timeInput");
-    /*chrome.alarms.create("TimerEnd", { delayInMinutes: parseInt(timeInput.value, 10) / 60 }); // 크롬 자체 API로 알람을 만드는 기능
-    alert(`Timer set for ${parseInt(timeInput.value, 10)} seconds.`); 디버깅용 알람 */
-startBtn.onclick = () => { 
-    timePassed = 0;
-    TIME_LIMIT = (parseInt(timeInput.value, 10) * 60);
-    if (isNaN(TIME_LIMIT) || TIME_LIMIT <= 0) {
-        if(TimerAgent == true){
-            timeInput.value = "";
-            StopTimer();
-            TimerAgent = false;//타이머를 실행했는가를 체크하는 변수
-            paused = false;
-            chrome.runtime.sendMessage({ action: "Input_Error", value: Error });// 타이머 관련 값을 background.js로 전송
-            document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
-            return;
+
+    // 다크 모드 설정 불러오기
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.documentElement.classList.add("dark");
+    }
+
+    startBtn.onclick = () => {
+        timePassed = 0;
+        TIME_LIMIT = (parseInt(timeInput.value, 10) * 60);
+        if (isNaN(TIME_LIMIT) || TIME_LIMIT <= 0) {
+            if (TimerAgent == true) {
+                timeInput.value = "";
+                StopTimer();
+                TimerAgent = false;//타이머를 실행했는가를 체크하는 변수
+                paused = false;
+                chrome.runtime.sendMessage({ action: "Input_Error", value: Error });// 타이머 관련 값을 background.js로 전송
+                document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
+                return;
+            } else {
+                Notvalid();
+                timeInput.value = "";
+                chrome.runtime.sendMessage({ action: "Input_Error", value: Error });
+                document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
+                return;
+            }
         } else {
-            Notvalid();
+            TimerAgent = true;
+            startTimer();
+            const inputValue = (timeInput.value * 60);
+            console.log("Changing image with value:", inputValue);
+            chrome.runtime.sendMessage({ action: "logValue", value: inputValue });
+            SetAlarm();
+            stopAlarmSound();
             timeInput.value = "";
-            chrome.runtime.sendMessage({ action: "Input_Error", value: Error });
-            document.getElementById("base-timer-label").innerHTML = formatTime(0); // 0:00을 표시
+        }
+    };
+    pauseBtn.onclick = () => {
+        if (timePassed != 0) {
+            PauseTimer();
+        } else {
+            TimerError();
             return;
         }
-    } else {
-        TimerAgent = true;
-        startTimer();
-        const inputValue = (timeInput.value * 60);
-        console.log("Changing image with value:", inputValue);
-        chrome.runtime.sendMessage({action: "logValue", value: inputValue});
-        SetAlarm();
-        stopAlarmSound();
-        timeInput.value = "";
-    }
-};
-    pauseBtn.onclick = () =>{
-    if(timePassed != 0) {
-        PauseTimer();
-    }
-    else{
-    TimerError();
-    return;
-    }
     };
-    resumeBtn.onclick = () =>{
-        if(timePassed != 0 ) {
+    resumeBtn.onclick = () => {
+        if (timePassed != 0) {
             ResumeTimer();
-        }
-        else{
+        } else {
             TimerError();
             return;
         }
@@ -131,7 +132,6 @@ function startTimer() {//타이머를 시작하는 함수.
     remainingPathColor = COLOR_CODES.info.color;
     document.getElementById("base-timer-path-remaining").classList.remove(COLOR_CODES.warning.color, COLOR_CODES.alert.color);
     document.getElementById("base-timer-path-remaining").classList.add(COLOR_CODES.info.color);
-
 
     timerInterval = setInterval(() => {// 주어진 기능을 일정한 간격으로 반복 실행하는 자바스크립트 함수 1000ms마다 실행
         timePassed = timePassed += 1; //interval 함수가 실행될 때마다 timePassed 변수를 1 증가
@@ -153,48 +153,44 @@ function startTimer() {//타이머를 시작하는 함수.
 }
 
 function PauseTimer() {//타이머를 일시정지 하는 함수,타이머 진행도는 timePass를 초기화 하지 않음으로 저장
-    if(!paused){
+    if (!paused) {
         clearInterval(timerInterval);
         chrome.runtime.sendMessage({ action: "Stop", value: paused });
         console.log("Send to Stop");
         paused = true;
         PauseAlarm();
-    }
-    else{
+    } else {
         PauseError();
     }
 }
-function ResumeTimer(){ //타이머를 재개하는 함수
-    if(paused){
+function ResumeTimer() { //타이머를 재개하는 함수
+    if (paused) {
         chrome.runtime.sendMessage({ action: "Start", value: paused });
         console.log("Send to Resume");
         paused = false;
         ResumeAlarm();
         startTimer();
-    }
-    else{
+    } else {
         ResumeError();
     }
 }
 
-function onTimesUp() {//타이머가 종료됐을떄 값 초기화
+function onTimesUp() {//타이머가 종료됐을때 값 초기화
     clearInterval(timerInterval);
     TIME_LIMIT = 0;
 }
 
 function formatTime(time) {//Html에 타이머 표시해주는 함수
-    if(!isNaN(time) && time > 0) {
+    if (!isNaN(time) && time > 0) {
         const minutes = Math.floor(time / 60);
         let seconds = time % 60;
 
         if (seconds < 10) {
-            seconds = `0${seconds}
-    `;
+            seconds = `0${seconds}`;
         }
 
-        return ` ${minutes}:${seconds}`;
-    }
-    else{//음수나 NaN(숫자가 아님)이 들어올 경우,
+        return `${minutes}:${seconds}`;
+    } else {//음수나 NaN(숫자가 아님)이 들어올 경우,
         console.log("Start Btn Re-enter");
         clearInterval(timerInterval);
         return `0:00`;
@@ -339,7 +335,7 @@ function ResumeAlarm() {// 알람 양식 4
     });
 }
 
-function ResumeError(){ // 알람 양식 5
+function ResumeError() { // 알람 양식 5
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '/Pic/48.png',
@@ -348,7 +344,7 @@ function ResumeError(){ // 알람 양식 5
     });
 }
 
-function PauseError(){ // 알람 양식 6
+function PauseError() { // 알람 양식 6
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '/Pic/49.png',
@@ -357,7 +353,7 @@ function PauseError(){ // 알람 양식 6
     });
 }
 
-function TimerError(){ // 알람 양식 7
+function TimerError() { // 알람 양식 7
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '/Pic/26.png',
@@ -366,7 +362,7 @@ function TimerError(){ // 알람 양식 7
     });
 }
 
-function StopTimer(){ // 알람 양식 8
+function StopTimer() { // 알람 양식 8
     chrome.notifications.create({
         type: 'basic',
         iconUrl: '/Pic/34.png',
@@ -374,11 +370,15 @@ function StopTimer(){ // 알람 양식 8
         message: '타이머를 정지했습니다.....',
     });
 }
-//다크모드
+
+// 다크모드 초기 설정
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    document.documentElement.classList.add("dark")
+    document.documentElement.classList.add("dark");
+    localStorage.setItem('darkMode', 'true');
 }
 
-document.getElementById("bottomBtn1").addEventListener("click",() => {
-    document.documentElement.classList.toggle("dark")
-})
+document.getElementById("bottomBtn1").addEventListener("click", () => {
+    document.documentElement.classList.toggle("dark");
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    localStorage.setItem('darkMode', isDarkMode);
+});
