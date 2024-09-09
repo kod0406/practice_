@@ -11,6 +11,16 @@
 
 #pragma comment(lib, "ws2_32")
 
+DWORD FormatMessageA(
+	DWORD dwFlags,//메시지 가져오는 포멧 설정 옵션
+	LPCVOID lpSource,//메시지 가져오는 소스
+	DWORD dwMessageId,//메시지 ID
+	DWORD dwLanguageld,//언어 ID
+	LPTSTR lpBuffer,//메시지를 저장할 버퍼
+	DWORD nSize,//버퍼의 크기
+	va_list* Arguments//메시지에 대한 추가적인 인수
+);
+
 void err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -23,6 +33,7 @@ void err_quit(const char* msg)
 	LocalFree(lpMsgBuf);
 	exit(1);
 }
+
 
 void err_display(const char* msg)
 {
