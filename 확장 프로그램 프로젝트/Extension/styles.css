@@ -317,6 +317,30 @@ p.info {
   color: #ccc;
 }
 
+#controls {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+
+/* Button styling */
+#toggleNoiseBtn {
+  border: 0.8px solid #eee; /* 80% of original 1px */
+  padding: 0.16rem 0.4rem; /* 80% of original 0.2rem 0.5rem */
+  margin: 0 0.4rem; /* 80% of original 0 0.5rem */
+  border-radius: 6.4px; /* 80% of original 8px */
+}
+
+#toggleNoiseBtn:hover {
+  background-color: inherit; /* No background change */
+  color: inherit; /* No text color change */
+}
+
+#youtube-video {
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+
 html.dark {
   background: #333;
   color: #fcfcfc;
