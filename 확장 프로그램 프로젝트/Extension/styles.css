@@ -148,6 +148,61 @@ body {
   background-color: #000000;
 }
 
+.focus-mode {
+  font-size: 1.2rem;
+  font-family: "Times New Roman", sans-serif;
+}
+
+
+.wrapper { position: relative; }
+#switch {
+  position: absolute;
+  /* hidden */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.switch_label {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  width: 58px;
+  height: 28px;
+  background: #efefef;
+  border: 2px solid #808080;
+  border-radius: 20px;
+  transition: 0.2s;
+}
+.switch_label:hover {
+  background: #ffffff;
+}
+.onf_btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  border-radius: 20px;
+  background: #808080;
+  transition: 0.2s;
+}
+#switch:checked+.switch_label {
+  background: #c44;
+  border: 2px solid #c44;
+}
+
+#switch:checked+.switch_label:hover {
+  background: #dd3535;
+}
+
+/* move */
+#switch:checked+.switch_label .onf_btn {
+  left: 33px;
+  background: #fff;
+  box-shadow: 1px 2px 3px #00000020;
+}
+
 .fullscreen-image {
   max-width: 80%; /* 80% of original 100% */
   height: auto;

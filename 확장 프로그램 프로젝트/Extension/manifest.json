@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Focus on Time",
-    "version": "1.0",
+    "version": "1.2",
     "description": "집중을 보조해주는 타이머 확장 프로그램입니다.",
     "background": {
         "scripts": ["background.js"],

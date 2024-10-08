@@ -10,58 +10,71 @@ let timeLeft = 0;
 let timePassed = 0;
 let left = 0;
 let intervalId = null;
+let imgChangeAllowed = false; // 이미지 변경 여부를 추적하는 변수
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {//popup.js에서 보낸 메시지를 받기위한 크롬 API
-  if (message.action === "logValue") { //정상적인 타이머가 시작되었을떄 background.js에서도 타이머 실행
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "Img") {
+    imgChangeAllowed = message.status; // true 또는 false로 설정
+    console.log("Image change status updated:", imgChangeAllowed);
+  }
+
+  if (message.action === "logValue") {
     timeLeft = message.value;
     console.log("Get Value:", timeLeft);
 
     intervalId = setInterval(() => {
-      timePassed = timePassed += 5;
+      timePassed += 5;
       left = timeLeft - timePassed;
 
-      if (left > 1) {
-        console.log("Send request to change img.");
-        console.log("timeLeft:", left);
+      // 남은 시간은 항상 콘솔에 출력
+      console.log("Time left:", left);
 
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { //background.js에서 이미지와 택스트를 바꾸는 changeimg.js로 메시지 전송
-          const currentTabId = tabs[0].id;
-          chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
-        });
-      } else if (left === 0) {//시간이 0이 되면 타이머 종료
+      if (left > 1) {
+        if (imgChangeAllowed) { // 이미지 변경이 허용된 경우에만 이미지 변경 메시지 전송
+          console.log("Send request to change img.");
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const currentTabId = tabs[0].id;
+            chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
+          });
+        }
+      } else if (left === 0) { // 타이머가 0에 도달하면 중지
         console.log("Interval stopped.");
         clearInterval(intervalId);
         timePassed = 0;
       }
     }, 5000);
-  } else if (message.action === "Start") { // 재시작 버튼을 눌렀을떄 보낸 메시지를 받았을 때,타이머 재실행 + 타이머 진행도는 timePass를 초기화 하지 않음으로 저장
-    console.log("recived Start");
+  } else if (message.action === "Start") {
+    console.log("Received Start");
+
     intervalId = setInterval(() => {
-      timePassed = timePassed += 5;
-      left = timeLeft - timePassed; 
+      timePassed += 5;
+      left = timeLeft - timePassed;
+
+      // 남은 시간은 항상 콘솔에 출력
+      console.log("Time left:", left);
 
       if (left > 1) {
-        console.log("Send request to change img.");
-        console.log("timeLeft:", left);
-
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          const currentTabId = tabs[0].id;
-          chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
-        });
+        if (imgChangeAllowed) { // 이미지 변경이 허용된 경우에만 이미지 변경 메시지 전송
+          console.log("Send request to change img.");
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const currentTabId = tabs[0].id;
+            chrome.tabs.sendMessage(currentTabId, { action: "changeContent" });
+          });
+        }
       } else if (left === 0) {
         console.log("Interval stopped.");
         clearInterval(intervalId);
         timePassed = 0;
       }
     }, 5000);
-  } else if (message.action === "Stop") {//일시정지 버튼을 눌렀을 때, 타이머 정지
-    console.log("recived Stop");
+  } else if (message.action === "Stop") {
+    console.log("Received Stop");
     clearInterval(intervalId);
-  }
-  else if(message.action === "Input_Error") {
+  } else if (message.action === "Input_Error") {
     console.log("Start Null Error");
     clearInterval(intervalId);
     timePassed = 0;
   }
 });
+
 //console.log()는 값을 정상적으로 전달받았는지 확인하기 위해 사용함.

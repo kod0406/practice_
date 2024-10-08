@@ -234,6 +234,21 @@ function stopAlarmSound() {
     audio.pause();
     audio.currentTime = 0;
 }
+
+const focusModeSwitch = document.getElementById("switch");
+
+focusModeSwitch.addEventListener("change", () => {
+    if (focusModeSwitch.checked) {
+        chrome.runtime.sendMessage({ action: "Img", status: true });
+        console.log("Focus mode on, image change allowed.");
+        Enable_focus();
+    } else {
+        chrome.runtime.sendMessage({ action: "Img", status: false });
+        console.log("Focus mode off, no image change.");
+        Disable_focus();
+    }
+});
+
 //console.log()는 값을 정상적으로 전달받았는지 확인하기 위해 사용함.
 
 //현재시간, Html상단의 Title을 현재 시간으로 표시해주는 코드
@@ -368,6 +383,26 @@ function StopTimer() { // 알람 양식 8
         iconUrl: '/Pic/34.png',
         title: '타이머 정지',
         message: '타이머를 정지했습니다.....',
+    });
+}
+
+function Enable_focus() {// 알람 양식 0
+    //알람 양식
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/Pic/46.png',
+        title: '집중모드 활성화',
+        message: '집중모드가 켜졌습니다.',
+    });
+}
+
+function Disable_focus() {// 알람 양식 0
+    //알람 양식
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '/Pic/46 (1).png',
+        title: '집중모드 비활성화',
+        message: '집중모드가 꺼졌습니다.',
     });
 }
 
