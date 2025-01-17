@@ -1,5 +1,5 @@
 //popup.js는 popup.html에서 타이머와 시간을 표시해주는 기능과, 받은 시간을 background.js에게 보내는 역할을 수행하는 스크립트.
-const audio = new Audio(chrome.runtime.getURL("/Audio/Martini Blue.flac"));
+const audio = new Audio(chrome.runtime.getURL("/Audio/Martini Blue.flac")); //뭐 노래는 내가 좋아하는걸로 설정
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 50;
 const ALERT_THRESHOLD = 30;
