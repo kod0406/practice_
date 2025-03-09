@@ -5,7 +5,7 @@ const chatBody = document.querySelector(".chat-body");
 const sendMessageButton = document.querySelector("#send-message");
 const fileInput = document.querySelector("#file-input");
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
-const fileCancelButton = document.querySelector(".file-cancel");
+const fileCancelButton = document.querySelector("#file-cancel");
 
 const API_KEY = config.API_KEY;
 

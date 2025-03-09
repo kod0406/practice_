@@ -275,7 +275,8 @@ body {
     display: none;
 }
 
-.chat-form .file-upload-wrapper.file-uploaded:hover #file-cancel,
-.chat-form .file-upload-wrapper.file-uploaded img{
+.chat-form .file-upload-wrapper.file-uploaded img,
+.chat-form .file-upload-wrapper.file-uploaded:hover #file-cancel
+{
     display: block;
 }
