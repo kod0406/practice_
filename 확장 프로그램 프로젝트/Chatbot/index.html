@@ -68,12 +68,17 @@
             <div class="chat-controls">
 
                 <button type="button" class="material-symbols-outlined"> sentiment_satisfied </button>
-                <button type="button" class="material-symbols-outlined"> attach_file </button>
+                <div class = "file-upload-wrapper">
+                    <input type = "file" accept = "image/*" id="file-input" hidden>
+                    <img src="#" alt="">
+                    <button type="button" id="file-upload" class="material-symbols-outlined"> attach_file </button>
+                    <button type="button" id="file-cancel" class="material-symbols-outlined"> close </button>
+                </div>
                 <button type="submit" id="send-message" class="material-symbols-outlined"> arrow_upward </button>
             </div>
         </form>
     </div>
 </div>
-<script src ="Script.js"></script>
+<script type="module" src ="Script.js"></script>
 </body>
 </html>

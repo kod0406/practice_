@@ -1,13 +1,22 @@
+import config from "./API.js";
+
 const messageInput = document.querySelector(".message-input");
 const chatBody = document.querySelector(".chat-body");
 const sendMessageButton = document.querySelector("#send-message");
+const fileInput = document.querySelector("#file-input");
+const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
+const fileCancelButton = document.querySelector(".file-cancel");
 
-const API_KEY = "";//털리면 큰일 남
+const API_KEY = config.API_KEY;
 
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 const userData = {
-    message : null
+    message : null,
+    file:{
+        data:null,
+        mimeType:null,
+    }
 }
 
 
@@ -19,22 +28,78 @@ const createMessageElement = (content,...classes) =>{
     return div;
 }
 
-const generateBotResponse = () => {
+const generateBotResponse = async (incomingMessageDiv) => {
+    const messageElement = incomingMessageDiv.querySelector(".message-text");
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{ text: userData.message }, ...(userData.file.data ? [{inline_data: userData.file}] : [])]
+            }]
+        })
+    }
 
+    try {
+        const response = await fetch(API_URL, requestOptions);
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error.message || "API 호출 중 오류가 발생했습니다.");
+
+        const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
+        messageElement.innerText = apiResponseText;
+    } catch (error) {
+        console.log(error);
+
+        // 사용자 친화적인 에러 메시지로 변환
+        let userFriendlyMessage = "죄송합니다. 대화 처리 중 문제가 발생했습니다.";
+
+        // 에러 유형에 따른 메시지 설정 (영어 에러 메시지를 한국어로 변환)
+        if (error.message.includes("quota") || error.message.includes("limit")) {
+            userFriendlyMessage = "일일 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.";
+        } else if (error.message.includes("network") || error.message.includes("connection")) {
+            userFriendlyMessage = "네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인해주세요.";
+        } else if (error.message.includes("timeout")) {
+            userFriendlyMessage = "서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.";
+        } else if (error.message.includes("unauthorized") || error.message.includes("API key")) {
+            userFriendlyMessage = "API 키가 유효하지 않습니다. 관리자에게 문의하세요.";
+        }
+
+        // 에러 메시지 표시 (개발자용 상세 에러는 작은 글씨로)
+        messageElement.innerHTML = `
+            <div style="color: #e74c3c;">${userFriendlyMessage}</div>
+            <details style="font-size: 0.8em; color: #7f8c8d; margin-top: 8px;">
+                <summary>개발자 정보 보기</summary>
+                ${error.message}
+            </details>
+            <div style="margin-top: 8px;">다시 메시지를 보내거나 나중에 다시 시도해주세요.</div>
+        `;
+    } finally {
+        //첨부된 파일을 초기화하고 챗봇이 생각하는 효과를 제거
+        userData.file = {};
+        incomingMessageDiv.classList.remove("thinking");
+        chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
+    }
 }
+
 
 //사용자의 메시지를 처리
 const handleOutgoingMessage = (e) =>{
     e.preventDefault();
     userData.message = messageInput.value.trim();
     messageInput.value = "";
-    
+    fileUploadWrapper.classList.remove("file-uploaded");
+
     //textContent로 받아 HTML 태그가 들어와도 일반 텍스트로 처리하여 출력
-    const messageContent = `<div class="message-text"></div>`;
+    const messageContent = `<div class="message-text"></div>
+    ${userData.file.data ? `<img src="data:${userData.file.mime_type};base64,${userData.file.data}"class="attachment"/>` : ""}`;
 
     const outgoingMessageDiv = createMessageElement(messageContent, "user-message");
     outgoingMessageDiv.querySelector(".message-text").textContent = userData.message;
     chatBody.appendChild(outgoingMessageDiv);
+    chatBody.scrollTo({top:chatBody.scrollHeight,behavior:"smooth"});
 
     //챗봇이 생각후 답변하는듯한 기능
     setTimeout(() => {
@@ -68,7 +133,8 @@ const handleOutgoingMessage = (e) =>{
         const incomingMessageDiv = createMessageElement(messageContent, "bot-message","thinking");
         //incomingMessageDiv.querySelector(".message-text").textContent = userData.message;
         chatBody.appendChild(incomingMessageDiv);
-        generateBotResponse();
+        chatBody.scrollTo({top:chatBody.scrollHeight,behavior:"smooth"});
+        generateBotResponse(incomingMessageDiv);
     },600);
 }
 
@@ -80,4 +146,31 @@ messageInput.addEventListener("keydown",(e) =>{
     }
 });
 
+//파일 첨부기능 + 이미지 미리보기
+fileInput.addEventListener("change", (e) => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        fileUploadWrapper.querySelector("img").src = e.target.result;
+        fileUploadWrapper.classList.add("file-uploaded");
+        const base64String = e.target.result.split(",")[1];
+        // 유저 데이터에 파일 정보 추가
+        userData.file = {
+            data: base64String,
+            mimeType: file.type,
+        };
+        fileInput.value = "";
+    };
+    reader.readAsDataURL(file);
+});
+
+//파일 삭제
+fileCancelButton.addEventListener("click", (e) => {
+    userData.file = {};
+    fileUploadWrapper.classList.remove("file-uploaded");
+});
+
 sendMessageButton.addEventListener("click",(e) =>handleOutgoingMessage(e))
+document.querySelector("#file-upload").addEventListener("click",() => fileInput.click());
