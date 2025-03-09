@@ -86,20 +86,52 @@ const generateBotResponse = async (incomingMessageDiv) => {
 
 
 //사용자의 메시지를 처리
-const handleOutgoingMessage = (e) =>{
+const resetFileInput = () => {
+    userData.file = {};
+    fileUploadWrapper.classList.remove("file-uploaded", "text-file", "image-file");
+    fileUploadWrapper.querySelector("img").style.display = "none";
+
+    // 파일 업로드 버튼을 원래 상태로 완전히 복원
+    const fileUploadButton = document.querySelector("#file-upload");
+    fileUploadButton.style.display = "block";
+    fileUploadButton.className = "material-symbols-outlined";
+    fileUploadButton.textContent = "attach_file";
+    fileUploadButton.removeAttribute("style");
+};
+
+// 중복 이벤트 리스너 제거하고 새 함수 사용
+fileCancelButton.addEventListener("click", resetFileInput);
+
+// handleOutgoingMessage 함수에서 파일 상태 초기화 부분 수정
+const handleOutgoingMessage = (e) => {
     e.preventDefault();
     userData.message = messageInput.value.trim();
     messageInput.value = "";
-    fileUploadWrapper.classList.remove("file-uploaded");
 
-    //textContent로 받아 HTML 태그가 들어와도 일반 텍스트로 처리하여 출력
-    const messageContent = `<div class="message-text"></div>
-    ${userData.file.data ? `<img src="data:${userData.file.mime_type};base64,${userData.file.data}"class="attachment"/>` : ""}`;
+    // 기존 코드: fileUploadWrapper.classList.remove("file-uploaded");
+    // 대신 완전한 초기화 함수 사용
 
+    // 파일 유형에 따라 다른 내용 표시
+    let fileContent = "";
+    if (userData.file.data) {
+        if (userData.file.mimeType.startsWith('image/')) {
+            // 이미지 파일
+            fileContent = `<img src="data:${userData.file.mimeType};base64,${userData.file.data}" class="attachment"/>`;
+        } else {
+            // 텍스트 파일 (커스텀 아이콘 표시)
+            fileContent = `<div class="text-attachment"><span class="material-symbols-outlined">docs</span></div>`;
+        }
+    }
+
+    const messageContent = `<div class="message-text"></div>${fileContent}`;
     const outgoingMessageDiv = createMessageElement(messageContent, "user-message");
     outgoingMessageDiv.querySelector(".message-text").textContent = userData.message;
     chatBody.appendChild(outgoingMessageDiv);
-    chatBody.scrollTo({top:chatBody.scrollHeight,behavior:"smooth"});
+
+    // 파일 상태 초기화 (메시지 전송 후)
+    resetFileInput();
+
+    chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
 
     //챗봇이 생각후 답변하는듯한 기능
     setTimeout(() => {
@@ -153,10 +185,23 @@ fileInput.addEventListener("change", (e) => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-        fileUploadWrapper.querySelector("img").src = e.target.result;
         fileUploadWrapper.classList.add("file-uploaded");
+
+        if (file.type.startsWith('image/')) {
+            fileUploadWrapper.querySelector("img").src = e.target.result;
+            fileUploadWrapper.querySelector("img").style.display = "block";
+            document.querySelector("#file-upload").style.display = "none";
+            fileUploadWrapper.classList.add("image-file");
+            fileUploadWrapper.classList.remove("text-file");
+        } else {
+            fileUploadWrapper.querySelector("img").style.display = "none";
+            document.querySelector("#file-upload").style.display = "block";
+            document.querySelector("#file-upload").innerHTML = '<span class="material-symbols-outlined">docs</span>';
+            fileUploadWrapper.classList.add("text-file");
+            fileUploadWrapper.classList.remove("image-file");
+        }
+
         const base64String = e.target.result.split(",")[1];
-        // 유저 데이터에 파일 정보 추가
         userData.file = {
             data: base64String,
             mimeType: file.type,
@@ -166,10 +211,34 @@ fileInput.addEventListener("change", (e) => {
     reader.readAsDataURL(file);
 });
 
+// 파일 삭제 시 원래 아이콘으로 되돌리기
+fileCancelButton.addEventListener("click", (e) => {
+    userData.file = {};
+    fileUploadWrapper.classList.remove("file-uploaded");
+    fileUploadWrapper.querySelector("img").style.display = "none";
+    document.querySelector("#file-upload").style.display = "block";
+    document.querySelector("#file-upload").innerHTML = '<span class="material-symbols-outlined">attach_file</span>';
+});
+
 //파일 삭제
 fileCancelButton.addEventListener("click", (e) => {
     userData.file = {};
     fileUploadWrapper.classList.remove("file-uploaded");
+    fileUploadWrapper.querySelector("img").style.display = "none";
+
+    // 파일 업로드 버튼을 원래 상태로 완전히 복원
+    const fileUploadButton = document.querySelector("#file-upload");
+    fileUploadButton.style.display = "block";
+
+    // 중첩된 span 구조 대신 원래의 텍스트 콘텐츠로 복원
+    fileUploadButton.className = "material-symbols-outlined";
+    fileUploadButton.textContent = "attach_file";
+
+    // 추가된 인라인 스타일 모두 제거
+    fileUploadButton.removeAttribute("style");
+
+    // 추가 클래스 제거
+    fileUploadWrapper.classList.remove("text-file", "image-file");
 });
 
 sendMessageButton.addEventListener("click",(e) =>handleOutgoingMessage(e))

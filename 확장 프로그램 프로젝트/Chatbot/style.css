@@ -280,3 +280,31 @@ body {
 {
     display: block;
 }
+
+/* 텍스트 파일 아이콘 처리를 위한 CSS */
+.file-upload-wrapper.text-file #file-upload {
+    color: #5350C4;
+    background-color: #f1f1ff;
+}
+
+.file-upload-wrapper.image-file #file-upload {
+    display: none;
+}
+
+.file-upload-wrapper.text-file img {
+    display: none;
+}
+
+.text-attachment {
+    margin-top: 8px;
+    background-color: #f1f1ff;
+    border-radius: 10px;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.text-attachment .material-symbols-outlined {
+    color: #5350C4;
+    font-size: 24px;
+}
