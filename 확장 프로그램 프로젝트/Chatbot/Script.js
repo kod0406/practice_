@@ -41,7 +41,7 @@ const generateBotResponse = async (incomingMessageDiv) => {
             }]
         })
     }
-
+    resetFileData();//데이터 초기화
     try {
         const response = await fetch(API_URL, requestOptions);
         const data = await response.json();
@@ -81,13 +81,12 @@ const generateBotResponse = async (incomingMessageDiv) => {
         userData.file = {};
         incomingMessageDiv.classList.remove("thinking");
         chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: "smooth" });
+
     }
 }
 
-
-//사용자의 메시지를 처리
-const resetFileInput = () => {
-    userData.file = {};
+// UI만 초기화하는 함수
+const resetFileUI = () => {
     fileUploadWrapper.classList.remove("file-uploaded", "text-file", "image-file");
     fileUploadWrapper.querySelector("img").style.display = "none";
 
@@ -99,6 +98,17 @@ const resetFileInput = () => {
     fileUploadButton.removeAttribute("style");
 };
 
+// 데이터만 초기화하는 함수
+const resetFileData = () => {
+    userData.file = {};
+};
+
+//사용자의 메시지를 처리
+const resetFileInput = () => {
+    resetFileUI();
+    resetFileData();
+};
+
 // 중복 이벤트 리스너 제거하고 새 함수 사용
 fileCancelButton.addEventListener("click", resetFileInput);
 
@@ -107,9 +117,6 @@ const handleOutgoingMessage = (e) => {
     e.preventDefault();
     userData.message = messageInput.value.trim();
     messageInput.value = "";
-
-    // 기존 코드: fileUploadWrapper.classList.remove("file-uploaded");
-    // 대신 완전한 초기화 함수 사용
 
     // 파일 유형에 따라 다른 내용 표시
     let fileContent = "";
@@ -128,8 +135,7 @@ const handleOutgoingMessage = (e) => {
     outgoingMessageDiv.querySelector(".message-text").textContent = userData.message;
     chatBody.appendChild(outgoingMessageDiv);
 
-    // 파일 상태 초기화 (메시지 전송 후)
-    resetFileInput();
+    resetFileUI();
 
     chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
 
@@ -166,7 +172,7 @@ const handleOutgoingMessage = (e) => {
         //incomingMessageDiv.querySelector(".message-text").textContent = userData.message;
         chatBody.appendChild(incomingMessageDiv);
         chatBody.scrollTo({top:chatBody.scrollHeight,behavior:"smooth"});
-        generateBotResponse(incomingMessageDiv);
+        generateBotResponse(incomingMessageDiv).finally(() => resetFileInput());
     },600);
 }
 
@@ -183,8 +189,10 @@ fileInput.addEventListener("change", (e) => {
     const file = fileInput.files[0];
     if (!file) return;
 
+
     const reader = new FileReader();
     reader.onload = (e) => {
+
         fileUploadWrapper.classList.add("file-uploaded");
 
         if (file.type.startsWith('image/')) {

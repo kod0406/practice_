@@ -308,3 +308,18 @@ body {
     color: #5350C4;
     font-size: 24px;
 }
+
+/* 더 강력한 선택자로 취소 버튼 숨기기 */
+.file-upload-wrapper.file-loading #file-cancel,
+.file-upload-wrapper.file-loading button#file-cancel,
+.file-upload-wrapper.file-loading *[id="file-cancel"] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* 이미 있는 스타일은 그대로 유지 */
+.file-upload-wrapper.file-loading img {
+    display: none !important;
+}
