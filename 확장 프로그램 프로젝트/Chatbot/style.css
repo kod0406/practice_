@@ -9,20 +9,67 @@
 }
 
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     min-height: 100vh;
     background: linear-gradient(#EEEEFF, #C8C7FF);
 }
+#chatbot-toggle{
+    position: fixed;
+    bottom:30px;
+    right:35px;
+    border:none;
+    height: 50px;
+    width:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor: pointer;
+    border-radius:50%;
+    background: #5350C4;
+    transition: all 0.2s ease;
+}
+body.show-chatbot #chatbot-toggle{
+    transform: rotate(90deg);
+}
+
+#chatbot-toggle span{
+    color:#fff;
+    position: absolute;
+}
+
+body.show-chatbot #chatbot-toggle span:first-child,
+#chatbot-toggle span:last-child{
+    opacity: 0;
+}
+
+#chatbot-toggle span:last-child {
+    opacity:0;
+}
+
+body.show-chatbot #chatbot-toggle span:last-child{
+    opacity: 1;
+
+}
 
 .chatbot-popup {
-    position: relative;
+    position: fixed;
+    right:35px;
+    bottom:90px;
     width: 420px;
     background: #fff;
     overflow: hidden;
     border-radius: 15px;
+    opacity:0;
+    transform: scale(0.2);
+    transform-origin: bottom right;
+    pointer-events: none;
     box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
+    transition:all 0.3s ease;
+}
+
+body.show-chatbot .chatbot-popup {
+    opacity: 1;
+    pointer-events:auto;
+    transform:scale(1);
 }
 
 .chat-header {
@@ -186,6 +233,7 @@ body {
 
 .chat-footer .chat-form {
     display: flex;
+    position: relative;
     align-items: center;
     background: #FFF;
     border-radius: 32px;
@@ -203,9 +251,17 @@ body {
     height: 47px;
     width: 100%;
     resize: none;
+    max-height: 180px;
+    white-space: pre-line;
     font-size: 0.95rem;
     padding: 14px 0 13px 18px;
     border-radius: inherit;
+    scrollbar-width: thin;
+    scrollbar-color:transparent transparent;
+}
+
+.chat-form .message-input:hover{
+    scrollbar-color:#ccccf5 transparent;
 }
 
 .chat-form .chat-controls{
@@ -307,6 +363,21 @@ body {
 .text-attachment .material-symbols-outlined {
     color: #5350C4;
     font-size: 24px;
+}
+
+em-emoji-picker{
+    position: absolute;
+    left:50%;
+    top:-337px;
+    width:100%;
+    max-width: 350px;
+    max-height: 330px;
+    visibility: hidden;
+    transform: translateX(-50%);
+}
+
+body.show-emoji-picker em-emoji-picker{
+    visibility: visible;
 }
 
 /* 더 강력한 선택자로 취소 버튼 숨기기 */

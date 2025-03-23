@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width,initial-scale = 1.0">
     <title>챗봇 API</title>
     <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"/>
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <button id="chatbot-toggle">
+        <span class="material-symbols-outlined">mode_comment</span>
+        <span class="material-symbols-outlined">close</span>
+    </button>
+
 <div class="chatbot-popup">
     <!-- 챗봇 뚝배기-->
     <div class="chat-header">
@@ -67,7 +72,7 @@
             <textarea placeholder="Input Something..." class="message-input" required></textarea>
             <div class="chat-controls">
 
-                <button type="button" class="material-symbols-outlined"> sentiment_satisfied </button>
+                <button type="button" id = "emoji-picker" class="material-symbols-outlined"> sentiment_satisfied </button>
                 <div class = "file-upload-wrapper">
                     <input type = "file" accept="image/*,text/*,.txt,.pdf,.doc,.docx" id="file-input" hidden>
                     <img src="#" alt="">
@@ -79,6 +84,7 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
 <script type="module" src ="Script.js"></script>
 </body>
 </html>

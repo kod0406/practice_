@@ -6,6 +6,8 @@ const sendMessageButton = document.querySelector("#send-message");
 const fileInput = document.querySelector("#file-input");
 const fileUploadWrapper = document.querySelector(".file-upload-wrapper");
 const fileCancelButton = document.querySelector("#file-cancel");
+const chatbotToggle = document.querySelector("#chatbot-toggle");
+const closeChatbot = document.querySelector("#close-chatbot");
 
 const API_KEY = config.API_KEY;
 
@@ -19,6 +21,9 @@ const userData = {
     }
 }
 
+const chatHistory = [];
+
+const initialInputHeight = messageInput.scrollHeight;
 
 //메시지 내용과 추가 클래스를 적용한 새로운 div 요소를 생성해 반환
 const createMessageElement = (content,...classes) =>{
@@ -27,18 +32,23 @@ const createMessageElement = (content,...classes) =>{
     div.innerHTML = content;
     return div;
 }
-
+//API한테 데이터 전송
 const generateBotResponse = async (incomingMessageDiv) => {
     const messageElement = incomingMessageDiv.querySelector(".message-text");
+
+    //사용자의 메시지 기록
+    chatHistory.push({
+        role : "user",
+        parts: [{ text: userData.message }, ...(userData.file.data ? [{inline_data: userData.file}] : [])]
+    });
+
     const requestOptions = {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            contents: [{
-                parts: [{ text: userData.message }, ...(userData.file.data ? [{inline_data: userData.file}] : [])]
-            }]
+            contents: chatHistory
         })
     }
     resetFileData();//데이터 초기화
@@ -50,6 +60,12 @@ const generateBotResponse = async (incomingMessageDiv) => {
 
         const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
         messageElement.innerText = apiResponseText;
+
+        //이전 채팅 기록 응답 기능
+        chatHistory.push({
+            role: "model",
+            parts: [{text: apiResponseText}]
+        });
     } catch (error) {
         console.log(error);
 
@@ -136,6 +152,7 @@ const handleOutgoingMessage = (e) => {
     chatBody.appendChild(outgoingMessageDiv);
 
     resetFileUI();
+    messageInput.dispatchEvent(new Event("input"));
 
     chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"});
 
@@ -179,9 +196,17 @@ const handleOutgoingMessage = (e) => {
 //엔터키를 누르면 메시지 보내기
 messageInput.addEventListener("keydown",(e) =>{
     const userMessage = e.target.value.trim();
-    if(e.key === "Enter"&& userMessage){
+    if(e.key === "Enter"&& userMessage && !e.shiftKey && window.innerWidth > 768){
         handleOutgoingMessage(e);
     }
+});
+
+//입력량에 따라 입력창의 높이가 동적으로 변경
+messageInput.addEventListener("input",() => {
+   messageInput.style.height = `${initialInputHeight}px`;
+   messageInput.style.height = `${messageInput.scrollHeight}px`;
+   document.querySelector(".chat-form").style.borderRadius
+       = messageInput.scrollHeight > initialInputHeight ? "15px" : "32px";
 });
 
 //파일 첨부기능 + 이미지 미리보기
@@ -249,5 +274,30 @@ fileCancelButton.addEventListener("click", (e) => {
     fileUploadWrapper.classList.remove("text-file", "image-file");
 });
 
+//이모지 선택기
+const picker = new EmojiMart.Picker({
+    theme: "light",
+    skinTonePosition: "none",
+    previewPosition: "none",
+    onEmojiSelect: (emoji) => {
+        const{ selectionStart: start,selectionEnd: end } = messageInput;
+        messageInput.setRangeText(emoji.native,start,end,"end");
+        messageInput.focus();
+    },
+    onClickOutside: (e) => {
+        if(e.target.id === "emoji-picker"){
+            document.body.classList.toggle("show-emoji-picker");
+        }else{
+            document.body.classList.remove("show-emoji-picker");
+        }
+    }
+});
+
+document.querySelector(".chat-form").appendChild(picker);
+
 sendMessageButton.addEventListener("click",(e) =>handleOutgoingMessage(e))
 document.querySelector("#file-upload").addEventListener("click",() => fileInput.click());
+
+chatbotToggle.addEventListener("click",() => document.body.classList.toggle("show-chatbot"));
+
+closeChatbot.addEventListener("click",() => document.body.classList.remove("show-chatbot"));
