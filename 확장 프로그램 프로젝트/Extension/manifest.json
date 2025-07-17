@@ -1,17 +1,13 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Focus on Time",
     "version": "1.2",
     "description": "집중을 보조해주는 타이머 확장 프로그램입니다.",
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
-    },
-    "browser_action": {
-        "default_icon": "/Pic/icon.png"
+        "service_worker": "background.js"
     },
     "action": {
-        "default_popup": "popup.html"
+        "default_icon": "/Pic/icon.png"
     },
     "icons": {
         "16": "/Pic/icon16.png",
@@ -20,7 +16,8 @@
         "256": "/Pic/icon256.png",
         "512": "/Pic/icon512.png"
     },
-    "permissions": ["alarms", "notifications", "tabs", "scripting", "http://*/*", "https://*/*"],
+    "permissions": ["alarms", "notifications", "tabs", "scripting"],
+    "host_permissions": ["http://*/*", "https://*/*"],
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
@@ -28,8 +25,13 @@
             "run_at": "document_end"
         }
     ],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; img-src 'self' data: http: https: 'self'",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: http: https:"
+    },
     "web_accessible_resources": [
-        "images/*"
+        {
+            "resources": ["images/*"],
+            "matches": ["<all_urls>"]
+        }
     ]
 }

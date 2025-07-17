@@ -1,5 +1,10 @@
-chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.tabs.create({'url': chrome.extension.getURL('popup.html')}, function(tab) {
+// Service worker 시작 이벤트
+chrome.runtime.onInstalled.addListener(() => {
+  console.log("Extension installed");
+});
+
+chrome.action.onClicked.addListener(function(tab) {
+  chrome.tabs.create({'url': chrome.runtime.getURL('popup.html')}, function(tab) {
   });
 });
 //background.js는 
