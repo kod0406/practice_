@@ -1,9 +1,9 @@
 {
   "imagePaths": [
-    "images/1.png",
-    "images/2.png",
-    "images/3.png",
-    "images/4.png"
+    "assets/images/1.png",
+    "assets/images/2.png",
+    "assets/images/3.png",
+    "assets/images/4.png"
   ],
   "messages": [
     "지금은 알려줄수 없다.",

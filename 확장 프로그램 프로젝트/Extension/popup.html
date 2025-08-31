@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="components/chatbot/chatbot.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0"/>
     <title>타이머</title>
 </head>
 <body>
 <div id="timer"></div>
 <div class="inputs">
     <br>
-    <input type="number" id="timeInput" placeholder="시간입력(분)"/><br><br>
+    <input type="number" id="timeInput" placeholder="시간입력(분)" aria-label="타이머 시간 입력"/><br><br>
     <button class="btn" id="startTimer">시작/정지</button>
     <button class="btn1" id="PauseTimer">일시정지</button>
     <button class="btn2" id="ResumeTimer">재시작</button>
 </div>
-
 
 <div class="wrapper" style="display: flex; align-items: center; gap: 10px;">
     <span class="focus-mode" title="집중모드를 활성화 하면 타이머가 동작하는 동안 모든 이미지가 변경되어 공부외의 업무를 방해합니다." >집중모드 OFF/ON</span>
@@ -39,13 +40,12 @@
     <button class="bottom-btn" id="bottomBtn1">다크모드 토글</button>
 </div>
 
-
-<img src="Pic/51.png" alt="샘플 이미지" class="fullscreen-image">
+<img src="assets/Pic/51.png" alt="샘플 이미지" class="fullscreen-image">
 <div class="todo-wrapper">
     <div class="todo-box">
         <div class="todo-input-box">
             <button class="complete-all-btn">✔</button>
-            <input type="text" class="todo-input" placeholder="해야 할 일을 입력해주세요.">
+            <input type="text" class="todo-input" placeholder="해야 할 일을 입력해주세요." aria-label="할 일 입력">
         </div>
 
         <ul class="todo-list">
@@ -71,15 +71,21 @@
 <!-- Embed YouTube Video -->
 <div id="youtube-video" style="text-align: center; margin-top: 20px;">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/omyp_YmEfRc"
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
     </iframe>
 </div>
 
-<script src="popup.js"></script>
-<script src="changeimg.js"></script>
-<script src="todo.js"></script>
-<script src="noise.js"></script>
-<script src="pink-noise-processor.js"></script>
-<script src="brown-noise-processor.js"></script>
+<!-- Chatbot Container - 동적 로딩될 컨테이너 -->
+<div id="chatbot-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+<!-- 챗봇 스크립트 추가: 레이아웃 동적 주입 및 초기화 -->
+<script src="components/chatbot/chatbot.js"></script>
+<script src="src/popup.js"></script>
+<script src="components/imageChanger/changeimg.js"></script>
+<script src="components/todo/todo.js"></script>
+<script src="components/noise/noise.js"></script>
+<script src="components/noise/pink-noise-processor.js"></script>
+<script src="components/noise/brown-noise-processor.js"></script>
 </body>
 </html>

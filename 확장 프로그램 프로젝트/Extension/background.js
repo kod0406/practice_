@@ -39,6 +39,17 @@ let intervalId = null;
 let imgChangeAllowed = false; // 이미지 변경 여부를 추적하는 변수
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // 알림 메시지 처리 추가
+  if (message.action === "showNotification") {
+    chrome.notifications.create({
+      type: message.type,
+      iconUrl: message.iconUrl,
+      title: message.title,
+      message: message.message
+    });
+    return;
+  }
+
   if (message.action === "Img") {
     imgChangeAllowed = message.status; // true 또는 false로 설정
     console.log("Image change status updated:", imgChangeAllowed);

@@ -1,0 +1,723 @@
+/* 구글 폰트에서 Inter 폰트를 가져오는 문구. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* 챗봇 관련 요소에만 적용되는 스타일 - 충돌 방지 */
+.chatbot-popup,
+.chatbot-popup *,
+#chatbot-toggle {
+    font-family: "Inter", sans-serif;
+    box-sizing: border-box;
+}
+
+/* 토글 버튼 - 좌측 하단으로 위치 변경 */
+#chatbot-toggle{
+    position: fixed;
+    bottom: 30px;
+    left: 35px;
+    border: none;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    background: #5350C4;
+    transition: all 0.2s ease;
+    z-index: 9999;
+}
+
+body.show-chatbot #chatbot-toggle{
+    transform: rotate(90deg);
+}
+
+#chatbot-toggle span{
+    color: #fff;
+    position: absolute;
+}
+
+body.show-chatbot #chatbot-toggle span:first-child,
+#chatbot-toggle span:last-child{
+    opacity: 0;
+}
+
+#chatbot-toggle span:last-child {
+    opacity: 0;
+}
+
+body.show-chatbot #chatbot-toggle span:last-child{
+    opacity: 1;
+}
+
+.chatbot-popup {
+    position: fixed;
+    left: 35px;
+    bottom: 90px;
+    width: 420px;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 15px;
+    opacity: 0;
+    transform: scale(0.2);
+    transform-origin: bottom left;
+    pointer-events: none;
+    box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    z-index: 9998;
+}
+
+/* 챗봇 팝업을 보이게 하는 규칙 */
+body.show-chatbot .chatbot-popup {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+/* 챗봇 헤더 */
+.chat-header {
+    display: flex;
+    align-items: center;
+    background: #5350C4;
+    padding: 15px 20px;
+    justify-content: space-between;
+}
+
+.chat-header .header-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.header-info .chatbot-logo {
+    height: 35px;
+    width: 35px;
+    background: #fff;
+    padding: 6px;
+    fill: #5350C4;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.header-info .logo-text {
+    color: #fff;
+    font-size: 1.31rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chat-header #close-chatbot {
+    border: none;
+    color: #fff;
+    height: 40px;
+    width: 40px;
+    font-size: 1.9rem;
+    margin-right: -10px;
+    padding-top: 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    background: none;
+    transition: 0.2s ease;
+}
+
+.chat-header #close-chatbot:hover {
+    background: #3d3a9d;
+}
+
+/* 챗봇 바디 */
+.chat-body {
+    padding: 25px 22px;
+    display: flex;
+    gap: 20px;
+    height: 460px;
+    margin-bottom: 82px;
+    overflow-y: auto;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: #ccccf5 transparent;
+}
+
+.chat-body .message {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+}
+
+.chat-body .bot-message .bot-avatar {
+    height: 35px;
+    width: 35px;
+    padding: 6px;
+    fill: #fff;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+    align-self: flex-end;
+    background: #5350C4;
+    border-radius: 50%;
+}
+
+.chat-body .user-message {
+    flex-direction: row-reverse;
+    align-items: flex-end;
+}
+
+.chat-body .message .message-text {
+    padding: 12px 16px;
+    max-width: 75%;
+    font-size: 0.95rem;
+    background: #F2F2FF;
+    border-radius: 13px 13px 13px 3px;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.chat-body .bot-message.thinking .message-text {
+    padding: 2px 16px;
+}
+
+.chat-body .user-message .message-text {
+    color: #fff;
+    background: #5350C4;
+    border-radius: 13px 13px 3px 13px;
+}
+
+.chat-body .user-message .attachment {
+    width: 50%;
+    margin-top: -7px;
+    border-radius: 13px 3px 13px 13px;
+    max-width: 200px;
+    max-height: 200px;
+    display: block;
+}
+
+/* Thinking indicator */
+.chat-body .bot-message .thinking-indicator {
+    display: flex;
+    gap: 4px;
+    padding-block: 15px;
+}
+
+.chat-body .bot-message .thinking-indicator .dot {
+    height: 7px;
+    width: 7px;
+    opacity: 0.7;
+    border-radius: 50%;
+    background: #6f6bc2;
+    animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+.chat-body .bot-message .thinking-indicator .dot:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.chat-body .bot-message .thinking-indicator .dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.chat-body .bot-message .thinking-indicator .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotPulse {
+    0%, 44% {
+        transform: translateY(0);
+    }
+    28% {
+        opacity: 0.4;
+        transform: translateY(-4px);
+    }
+    44% {
+        opacity: 0.2;
+    }
+}
+
+/* 텍스트 첨부파일 스타일 */
+.text-attachment {
+    margin-top: 8px;
+    background-color: #f1f1ff;
+    border-radius: 10px;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.text-attachment .material-symbols-outlined {
+    color: #5350C4;
+    font-size: 24px;
+}
+
+/* 챗봇 푸터 */
+.chat-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #FFF;
+    padding: 15px 22px 20px;
+}
+
+.chat-footer .chat-form {
+    display: flex;
+    position: relative;
+    align-items: flex-end;
+    background: #FFF;
+    border-radius: 32px;
+    outline: 1px solid #CCCCE5;
+    transition: outline-color 0.5s ease;
+}
+
+.chat-footer .chat-form:focus-within{
+    outline: 2px solid #5350C4;
+    transition: outline-color 0.5s ease;
+}
+
+.chat-form .message-input {
+    border: none;
+    outline: none;
+    height: 47px;
+    width: 100%;
+    resize: none;
+    max-height: 180px;
+    white-space: pre-line;
+    font-size: 0.95rem;
+    padding: 14px 0 13px 18px;
+    border-radius: inherit;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    background: transparent;
+}
+
+.chat-form .message-input:hover{
+    scrollbar-color: #ccccf5 transparent;
+}
+
+.chat-form .message-input::placeholder {
+    color: #999;
+}
+
+.chat-form .chat-controls{
+    display: flex;
+    height: 47px;
+    gap: 3px;
+    align-items: center;
+    align-self: flex-end;
+    padding-right: 6px;
+}
+
+.chat-form .chat-controls button{
+    height: 35px;
+    width: 35px;
+    border: none;
+    font-size: 1.15rem;
+    cursor: pointer;
+    color: #706DB0;
+    background: none;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.chat-form .chat-controls #send-message{
+    color: #fff;
+    display: none;
+    background: #5350C4;
+}
+
+.chat-form .message-input:valid ~ .chat-controls #send-message{
+    display: block;
+}
+
+.chat-form .chat-controls #send-message:hover{
+    background: #3d39ac;
+}
+
+.chat-form .chat-controls button:hover{
+    background: #f1f1ff;
+    transition: background-color 0.2s ease;
+}
+
+/* 파일 업로드 */
+.chat-form .file-upload-wrapper{
+    height: 35px;
+    width: 35px;
+    position: relative;
+}
+
+.chat-form .file-upload-wrapper :where(img,button){
+    position: absolute;
+}
+
+.chat-form .file-upload-wrapper img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.chat-form .file-upload-wrapper #file-cancel{
+    color: #eb5757;
+    background: #fff;
+}
+
+.chat-form .file-upload-wrapper :where(img,#file-cancel),
+.chat-form .file-upload-wrapper.file-uploaded #file-upload{
+    display: none;
+}
+
+.chat-form .file-upload-wrapper.file-uploaded img,
+.chat-form .file-upload-wrapper.file-uploaded:hover #file-cancel
+{
+    display: block;
+}
+
+/* 텍스트 파일 아이콘 처리를 위한 CSS */
+.file-upload-wrapper.text-file #file-upload {
+    color: #5350C4;
+    background-color: #f1f1ff;
+}
+
+.file-upload-wrapper.image-file #file-upload {
+    display: none;
+}
+
+.file-upload-wrapper.text-file img {
+    display: none;
+}
+
+/* 이모지 픽커 */
+em-emoji-picker{
+    position: absolute;
+    left: 50%;
+    top: -337px;
+    width: 100%;
+    max-width: 350px;
+    max-height: 330px;
+    visibility: hidden;
+    transform: translateX(-50%);
+}
+
+body.show-emoji-picker em-emoji-picker{
+    visibility: visible;
+}
+
+/* 스크롤바 스타일 */
+.chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 다크모드 지원 - 챗봇 팝업 */
+html.dark .chatbot-popup {
+    background: #333;
+    color: #fcfcfc;
+    box-shadow: 0 0 128px 0 rgba(255, 255, 255, 0.1), 0 32px 64px -48px rgba(255, 255, 255, 0.3);
+}
+
+html.dark .chat-header {
+    background: #444;
+}
+
+html.dark .header-info .chatbot-logo {
+    background: #fcfcfc;
+    fill: #333;
+}
+
+html.dark .header-info .logo-text {
+    color: #fcfcfc;
+}
+
+html.dark .chat-header #close-chatbot {
+    color: #fcfcfc;
+}
+
+html.dark .chat-header #close-chatbot:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+html.dark .chat-body {
+    background: #333;
+    color: #fcfcfc;
+}
+
+html.dark .chat-body .bot-message .bot-avatar {
+    background: #444;
+    fill: #fcfcfc;
+}
+
+html.dark .chat-body .bot-message .message-text {
+    background: #444;
+    color: #fcfcfc;
+}
+
+html.dark .chat-body .user-message .message-text {
+    background: #5350C4;
+    color: #fff;
+}
+
+html.dark .chat-footer {
+    background: #333;
+    border-top-color: #555;
+}
+
+html.dark .chat-footer .chat-form {
+    background: #333;
+    outline-color: #666;
+}
+
+html.dark .chat-footer .chat-form:focus-within {
+    outline-color: #5350C4;
+}
+
+html.dark .chat-form .message-input {
+    background: #333;
+    color: #fcfcfc;
+}
+
+html.dark .chat-form .message-input::placeholder {
+    color: #aaa;
+}
+
+html.dark .chat-form .chat-controls button {
+    color: #aaa;
+}
+
+html.dark .chat-form .chat-controls button:hover {
+    background: #444;
+}
+
+html.dark .chat-form .chat-controls #send-message {
+    background: #5350C4;
+    color: #fff;
+}
+
+html.dark .chat-form .chat-controls #send-message:hover {
+    background: #3d39ac;
+}
+
+html.dark .file-upload-wrapper.text-file #file-upload {
+    background: #444;
+    color: #5350C4;
+}
+
+html.dark .text-attachment {
+    background: #444;
+}
+
+html.dark #file-cancel {
+    background: #333;
+    color: #eb5757;
+    border-color: #eb5757;
+}
+
+/* 다크모드에서 스크롤바 스타일 */
+html.dark .chat-body::-webkit-scrollbar-track {
+    background: #444;
+}
+
+html.dark .chat-body::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+html.dark .chat-body::-webkit-scrollbar-thumb:hover {
+    background: #888;
+}
+
+/* API 키 설정 영역 */
+.api-key-section {
+    background: #f8f9ff;
+    border-bottom: 1px solid #e5e7f0;
+    padding: 15px 20px;
+}
+
+.api-key-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.api-key-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.api-key-title .material-symbols-outlined {
+    color: #5350C4;
+    font-size: 20px;
+}
+
+.api-key-title span {
+    font-weight: 600;
+    color: #333;
+}
+
+.api-key-link {
+    color: #5350C4;
+    text-decoration: none;
+    font-size: 12px;
+    margin-left: 8px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.api-key-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.api-key-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.api-status {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: #fee;
+    color: #d63031;
+}
+
+.api-status.connected {
+    background: #eff;
+    color: #00b894;
+}
+
+.api-toggle-btn {
+    background: none;
+    border: none;
+    color: #5350C4;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.api-toggle-btn:hover {
+    background: #f1f1ff;
+}
+
+.api-toggle-btn .material-symbols-outlined {
+    transition: transform 0.2s ease;
+}
+
+.api-toggle-btn.expanded .material-symbols-outlined {
+    transform: rotate(180deg);
+}
+
+.api-key-content {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7f0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.api-key-content.hidden {
+    display: none;
+}
+
+.api-key-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#api-key-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.2s ease;
+}
+
+#api-key-input:focus {
+    outline: none;
+    border-color: #5350C4;
+    box-shadow: 0 0 0 2px rgba(83, 80, 196, 0.1);
+}
+
+.api-save-btn {
+    background: #5350C4;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.api-save-btn:hover {
+    background: #3d39ac;
+}
+
+.api-save-btn:active {
+    transform: translateY(1px);
+}
+
+.api-key-help {
+    text-align: center;
+}
+
+.api-key-help a {
+    color: #5350C4;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+}
+
+.api-key-help a:hover {
+    color: #3d39ac;
+    text-decoration: underline;
+}
+
+/* API 키가 설정되었을 때 섹션 숨기기 */
+.api-key-section.hidden {
+    display: none;
+}
+
+/* 다크모드에서 API 키 영역 */
+html.dark .api-key-section {
+    background: #2a2a2a;
+    border-bottom-color: #444;
+}
+
+html.dark .api-key-header {
+    color: #fcfcfc;
+}
+
+html.dark .api-key-input-group input {
+    background: #333;
+    border-color: #555;
+    color: #fcfcfc;
+}
+
+html.dark .api-key-input-group input:focus {
+    border-color: #5350C4;
+}
+
+html.dark .api-key-input-group input::placeholder {
+    color: #aaa;
+}

@@ -7,21 +7,21 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_icon": "/Pic/icon.png"
+        "default_icon": "/assets/Pic/icon.png"
     },
     "icons": {
-        "16": "/Pic/icon16.png",
-        "48": "/Pic/icon48.png",
-        "128": "/Pic/icon128.png",
-        "256": "/Pic/icon256.png",
-        "512": "/Pic/icon512.png"
+        "16": "/assets/Pic/icon16.png",
+        "48": "/assets/Pic/icon48.png",
+        "128": "/assets/Pic/icon128.png",
+        "256": "/assets/Pic/icon256.png",
+        "512": "/assets/Pic/icon512.png"
     },
-    "permissions": ["alarms", "notifications", "tabs", "scripting"],
+    "permissions": ["alarms", "notifications", "tabs", "scripting", "storage"],
     "host_permissions": ["http://*/*", "https://*/*"],
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["changeimg.js"],
+            "js": ["components/imageChanger/changeimg.js"],
             "run_at": "document_end"
         }
     ],
@@ -30,7 +30,7 @@
     },
     "web_accessible_resources": [
         {
-            "resources": ["images/*", "data.json"],
+            "resources": ["assets/images/*", "assets/Audio/*", "data.json", "components/chatbot/chatbot_layout.html"],
             "matches": ["<all_urls>"]
         }
     ]
