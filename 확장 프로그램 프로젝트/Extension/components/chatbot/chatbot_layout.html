@@ -35,7 +35,7 @@
 
     <!-- API 키 설정 영역 -->
     <div class="api-key-section" id="api-key-section">
-        <div class="api-key-header" id="api-key-header">
+        <div class="api-key-header" id="api-key-header" style="cursor: default;">
             <div class="api-key-title">
                 <span class="material-symbols-outlined">key</span>
                 <span>API 키 설정</span>
@@ -43,7 +43,7 @@
             </div>
             <div class="api-key-controls">
                 <span class="api-status" id="api-status">❌ 미설정</span>
-                <button class="api-toggle-btn" id="api-toggle-btn">
+                <button class="api-toggle-btn" id="api-toggle-btn" type="button" style="cursor: pointer;">
                     <span class="material-symbols-outlined">expand_more</span>
                 </button>
             </div>
@@ -58,6 +58,20 @@
                     autocomplete="off"
                 >
                 <button id="save-api-key" class="api-save-btn">저장</button>
+            </div>
+
+            <!-- 모델 선택 드롭다운 추가 -->
+            <div class="model-selection-group" style="margin-top: 15px;">
+                <label for="model-select" style="display: block; margin-bottom: 5px; font-size: 0.9rem; color: #666;">
+                    <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle; margin-right: 5px;">smart_toy</span>
+                    모델 선택
+                </label>
+                <select id="model-select" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; background: white; font-size: 0.9rem;">
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                    <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                    <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+
+                </select>
             </div>
         </div>
     </div>
