@@ -566,37 +566,6 @@ async function initializeChatbot() {
     if (closeChatbot) {
         closeChatbot.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
     }
-
-    // 이모지 픽커 초기화 (emoji-mart가 로드된 경우에만)
-    if (typeof EmojiMart !== 'undefined' && messageInput) {
-        try {
-            const picker = new EmojiMart.Picker({
-                theme: "light",
-                skinTonePosition: "none",
-                previewPosition: "none",
-                onEmojiSelect: (emoji) => {
-                    const { selectionStart: start, selectionEnd: end } = messageInput;
-                    messageInput.setRangeText(emoji.native, start, end, "end");
-                    messageInput.focus();
-                },
-                onClickOutside: (e) => {
-                    if (e.target.id === "emoji-picker") {
-                        document.body.classList.toggle("show-emoji-picker");
-                    } else {
-                        document.body.classList.remove("show-emoji-picker");
-                    }
-                }
-            });
-
-            const chatForm = document.querySelector(".chat-form");
-            if (chatForm) {
-                chatForm.appendChild(picker);
-            }
-        } catch (e) {
-            console.warn('Emoji picker init failed:', e);
-        }
-    }
-
     console.log("Chatbot initialized successfully");
 }
 

@@ -380,22 +380,6 @@ body.show-chatbot .chatbot-popup {
     display: none;
 }
 
-/* 이모지 픽커 */
-em-emoji-picker{
-    position: absolute;
-    left: 50%;
-    top: -337px;
-    width: 100%;
-    max-width: 350px;
-    max-height: 330px;
-    visibility: hidden;
-    transform: translateX(-50%);
-}
-
-body.show-emoji-picker em-emoji-picker{
-    visibility: visible;
-}
-
 /* 스크롤바 스타일 */
 .chat-body::-webkit-scrollbar {
     width: 6px;
@@ -705,6 +689,11 @@ html.dark .api-key-section {
 }
 
 html.dark .api-key-header {
+    color: #fcfcfc;
+}
+
+
+html.dark .api-key-title span:not(.material-symbols-outlined) {
     color: #fcfcfc;
 }
 
