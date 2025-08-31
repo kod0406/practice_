@@ -1,0 +1,15 @@
+{
+  "imagePaths": [
+    "images/1.png",
+    "images/2.png",
+    "images/3.png",
+    "images/4.png"
+  ],
+  "messages": [
+    "지금은 알려줄수 없다.",
+    "그런건가...",
+    "이 이야기는 그만하도록 하지.",
+    "그것도 모르나?",
+    "네가 알 필요는 없다."
+  ]
+}

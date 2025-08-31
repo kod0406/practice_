@@ -7,7 +7,28 @@ chrome.action.onClicked.addListener(function(tab) {
   chrome.tabs.create({'url': chrome.runtime.getURL('popup.html')}, function(tab) {
   });
 });
-//background.js는 
+
+// 탭이 닫힐 때 타이머 초기화
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  console.log("Tab closed, clearing timer");
+  clearInterval(intervalId);
+  timeLeft = 0;
+  timePassed = 0;
+  left = 0;
+  imgChangeAllowed = false;
+});
+
+// 확장 프로그램이 비활성화될 때 타이머 초기화
+chrome.runtime.onSuspend.addListener(() => {
+  console.log("Extension suspending, clearing timer");
+  clearInterval(intervalId);
+  timeLeft = 0;
+  timePassed = 0;
+  left = 0;
+  imgChangeAllowed = false;
+});
+
+//background.js는
 //1)확장 프로그램 아이콘을 누르면 새 탭에 popup.html이 열리게 하는 스크립트(상단),
 //2) popup.js에서 메시지를 통해 받은 값만큼 이미지와 택스트를 바꾸는 changeimg.js에게 지속적으로 메시지를 보내는 역할을 수행하는 스크립트(하단)
 
